@@ -10,14 +10,15 @@
 
     <body>
         <div ng-controller="MyController">
+            <button ng-show="loginObj.user" ng-click="logout()" style="float: right">logout</button>
             <h1>hello.</h1>
+            <h5>{{ status }}</h5>
             <div ng-hide="loginObj.user">
-                <input type="email" ng-model="user.email" placeholder="email" />
-                <input type="password" ng-model="user.password" placeholder="password" />
+                <input type="email" ng-model="userlogin.email" placeholder="email" />
+                <input type="password" ng-model="userlogin.password" placeholder="password" />
                 <button ng-click="login()">login</button>
             </div>
             <div ng-show="loginObj.user">
-                <button ng-click="logout()">logout</button>
                 <span>{{ main.msg }}</span> <br/>
                 <input ng-model="main.msg" type="text"/> <br/>
                 <button ng-click="doTest()">Do Test</button>
@@ -42,10 +43,10 @@
 
                 $scope.login = function () {
                     $scope.loginObj.$login('password', {
-                        email: 'kalweit@alumni.duke.edu',
-                        password: 'password'
+                        email: $scope.userlogin.email,
+                        password: $scope.userlogin.password
                     }).then(function (user) {
-                                $scope.status = 'Logged in as: ' + user.uid;
+                                $scope.status = '';
                             },
                             function (error) {
                                 $scope.status = 'Failed to login: ' + error;
