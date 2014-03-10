@@ -1,11 +1,41 @@
-<http>
+<http ng-app="MyApp">
 
-<head>
-	<title>Home</title>
-</head>
+    <head>
+        <title>Home</title>
+        <script src="scripts/vendor/angular.js"></script>
+        <script src="scripts/vendor/firebase.js"></script>
+        <script src="scripts/vendor/angularfire.js"></script>
+    </head>
 
-<body>
-	<h1>This is a test 4.</h1>
-</body>
+    <body>
+        <div ng-controller="MyController">
+            <h1>This is a test 7.</h1>
+            <span>{{ main.msg }}</span> <br/>
+            <input ng-model="main.msg" type="text"/> <br/>
+            <button ng-click="doTest()">Do Test</button>
+        </div>
+        <script>
+            var myApp = angular.module("MyApp", ["firebase"]);
+
+            function MyController($scope, $firebase) {
+
+                $scope.msg = 'Hello Controller!';
+
+                $scope.doTest = function () {
+                    $scope.main.msg = 'Hello Function!';
+                    $scope.main.$save();
+                };
+
+
+                var mainRef = new Firebase("https://cydb.firebaseio.com/jkalweit/main");
+                mainRef.set({ msg: 'Hello from firebase!', msg2: 'Cool!' });
+                $scope.main = $firebase(mainRef);
+
+                //var todoRef = new Firebase("https://cydb.firebaseio.com/jkalweit/todo");
+                //$scope.todo = $firebase(todoRef);
+                //todoRef.$add({ })
+            }
+        </script>
+    </body>
 
 </http>
