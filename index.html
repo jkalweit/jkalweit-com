@@ -4,30 +4,61 @@
         <title>Home</title>
         <script src="scripts/vendor/angular.js"></script>
         <script src="scripts/vendor/firebase.js"></script>
+        <script src="scripts/vendor/firebase-simple-login.js"></script>
         <script src="scripts/vendor/angularfire.js"></script>
     </head>
 
     <body>
         <div ng-controller="MyController">
-            <h1>This is a test 7.</h1>
-            <span>{{ main.msg }}</span> <br/>
-            <input ng-model="main.msg" type="text"/> <br/>
-            <button ng-click="doTest()">Do Test</button>
+            <h1>hello.</h1>
+            <div ng-hide="loginObj.user">
+                <input type="email" ng-model="user.email" placeholder="email" />
+                <input type="password" ng-model="user.password" placeholder="password" />
+                <button ng-click="login()">login</button>
+            </div>
+            <div ng-show="loginObj.user">
+                <button ng-click="logout()">logout</button>
+                <span>{{ main.msg }}</span> <br/>
+                <input ng-model="main.msg" type="text"/> <br/>
+                <button ng-click="doTest()">Do Test</button>
+            </div>
         </div>
         <script>
             var myApp = angular.module("MyApp", ["firebase"]);
 
-            function MyController($scope, $firebase) {
+            function MyController($scope, $firebase, $firebaseSimpleLogin) {
 
                 $scope.msg = 'Hello Controller!';
+
+
+                var dataRef = new Firebase("https://jkalweit.firebaseio.com");
+                $scope.loginObj = $firebaseSimpleLogin(dataRef);
+
 
                 $scope.doTest = function () {
                     $scope.main.msg = 'Hello Function!';
                     $scope.main.$save();
                 };
 
+                $scope.login = function () {
+                    $scope.loginObj.$login('password', {
+                        email: 'kalweit@alumni.duke.edu',
+                        password: 'password'
+                    }).then(function (user) {
+                                $scope.status = 'Logged in as: ' + user.uid;
+                            },
+                            function (error) {
+                                $scope.status = 'Failed to login: ' + error;
+                            });
+                };
 
-                var mainRef = new Firebase("https://cydb.firebaseio.com/jkalweit/main");
+                $scope.logout = function () {
+                    $scope.loginObj.$logout();
+                };
+
+
+
+                var mainRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit-com/main");
                 mainRef.set({ msg: 'Hello from firebase!', msg2: 'Cool!' });
                 $scope.main = $firebase(mainRef);
 
