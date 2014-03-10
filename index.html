@@ -1,4 +1,4 @@
-<http ng-app="MyApp">
+<http ng-app="app">
 
     <head>
         <title>Home</title>
@@ -9,7 +9,7 @@
     </head>
 
     <body>
-        <div ng-controller="MyController">
+        <div ng-controller="maincontroller">
             <button ng-show="loginObj.user" ng-click="logout()" style="float: right">logout</button>
             <h1>hello.</h1>
             <h5>{{ status }}</h5>
@@ -19,27 +19,30 @@
                 <button ng-click="login()">login</button>
             </div>
             <div ng-show="loginObj.user">
-                <span>{{ main.msg }}</span> <br/>
-                <input ng-model="main.msg" type="text"/> <br/>
-                <button ng-click="doTest()">Do Test</button>
+                <form>
+                    <input ng-model="newtask.description" type="text"/>
+                    <button type="submit" ng-click="addtask()">add</button>
+                </form>
+                <table>
+                    <tbody>
+                        <tr ng-repeat="(key, task) in tasks">
+                            <td style="min-width: 250px;">{{ task.description }}</td>
+                            <td><button ng-click="removetask(key)">x</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <script>
-            var myApp = angular.module("MyApp", ["firebase"]);
+            var myApp = angular.module("app", ["firebase"]);
 
-            function MyController($scope, $firebase, $firebaseSimpleLogin) {
-
-                $scope.msg = 'Hello Controller!';
-
+            function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
 
                 var dataRef = new Firebase("https://jkalweit.firebaseio.com");
                 $scope.loginObj = $firebaseSimpleLogin(dataRef);
 
-
-                $scope.doTest = function () {
-                    $scope.main.msg = 'Hello Function!';
-                    $scope.main.$save();
-                };
+                var tasksRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit/tasks");
+                $scope.tasks = $firebase(tasksRef);
 
                 $scope.login = function () {
                     $scope.loginObj.$login('password', {
@@ -57,15 +60,23 @@
                     $scope.loginObj.$logout();
                 };
 
+                $scope.addtask = function () {
+                    $scope.tasks.$add($scope.newtask).then(function () {
+                        $scope.status = '';
+                        $scope.newtask = {};
+                    }, function (error) {
+                        $scope.status = 'failed to add task: ' + error;
+                    });
+                };
+                $scope.removetask = function (key) {
+                    $scope.tasks.$remove(key).then(function () {
+                        $scope.status = '';
+                    }, function (error) {
+                        $scope.status = 'failed to delete task: ' + error;
+                    });
+                };
 
 
-                var mainRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit-com/main");
-                mainRef.set({ msg: 'Hello from firebase!', msg2: 'Cool!' });
-                $scope.main = $firebase(mainRef);
-
-                //var todoRef = new Firebase("https://cydb.firebaseio.com/jkalweit/todo");
-                //$scope.todo = $firebase(todoRef);
-                //todoRef.$add({ })
             }
         </script>
     </body>
