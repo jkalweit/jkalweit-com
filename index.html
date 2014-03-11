@@ -34,9 +34,13 @@
             </div>
         </div>
         <script>
-            var myApp = angular.module("app", ["firebase"]);
+            var myApp = angular.module('app', ['firebase']);
 
             function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
+
+                //if($location.host() == 'localhost') {
+                //    $location.url('http://www.jkalweit.com', 'replace');
+                //}
 
                 var dataRef = new Firebase("https://jkalweit.firebaseio.com");
                 $scope.loginObj = $firebaseSimpleLogin(dataRef);
