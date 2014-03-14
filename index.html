@@ -14,9 +14,11 @@
             <h1>hello.</h1>
             <h5>{{ status }}</h5>
             <div ng-hide="loginObj.user">
-                <input type="email" ng-model="userlogin.email" placeholder="email" />
-                <input type="password" ng-model="userlogin.password" placeholder="password" />
-                <button ng-click="login()">login</button>
+                <form>
+                    <input ng-disabled="logindisabled" type="email" ng-model="userlogin.email" placeholder="email" />
+                    <input ng-disabled="logindisabled" type="password" ng-model="userlogin.password" placeholder="password" />
+                    <button ng-disabled="logindisabled" type="submit" ng-click="login()">login</button>
+                </form>
             </div>
             <div ng-show="loginObj.user">
                 <form>
@@ -42,22 +44,34 @@
                 //    $location.url('http://www.jkalweit.com', 'replace');
                 //}
 
+                $scope.logindisabled = true;
+
                 var dataRef = new Firebase("https://jkalweit.firebaseio.com");
                 $scope.loginObj = $firebaseSimpleLogin(dataRef);
+                $scope.loginObj.$getCurrentUser().then(function (user) {
+                    $scope.logindisabled = false;
+                }, function (error) {
+                    $scope.logindisabled = false;
+                });
+
 
                 var tasksRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit/tasks");
                 $scope.tasks = $firebase(tasksRef);
 
                 $scope.login = function () {
+                    $scope.logindisabled = true;
+                    $scope.status = 'Logging in...';
                     $scope.loginObj.$login('password', {
                         email: $scope.userlogin.email,
                         password: $scope.userlogin.password
                     }).then(function (user) {
                                 $scope.status = '';
+                                $scope.logindisabled = false;
                             },
                             function (error) {
                                 $scope.status = 'Failed to login: ' + error;
-                            });
+                                $scope.logindisabled = false;
+                    });
                 };
 
                 $scope.logout = function () {
