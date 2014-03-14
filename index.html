@@ -22,17 +22,25 @@
             </div>
             <div ng-show="loginObj.user">
                 <form>
-                    <input ng-model="newtask.description" type="text"/>
-                    <button type="submit" ng-click="addtask()">add</button>
+                    <input ng-model="newcategory.description" type="text"/>
+                    <button type="submit" ng-click="addcategory()">add category</button>
                 </form>
-                <table>
-                    <tbody>
-                        <tr ng-repeat="(key, task) in tasks">
-                            <td style="min-width: 250px;">{{ task.description }}</td>
-                            <td><button ng-click="removetask(key)">x</button></td>
+
+                <div ng-repeat="(catkey, category) in categories">
+                    <h3>{{ category.description }}</h3>
+                    <form>
+                        <input ng-model="newitem.description" type="text"/>
+                        <button type="submit" ng-click="additem(catkey)">add</button>
+                    </form>
+                    <table>
+                        <tbody>
+                        <tr ng-repeat="(itemkey, item) in category.items">
+                            <td style="min-width: 250px;">{{ item.description }}</td>
+                            <td><button ng-click="removeitem(catkey, itemkey)">x</button></td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <script>
@@ -40,12 +48,9 @@
 
             function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
 
-                //if($location.host() == 'localhost') {
-                //    $location.url('http://www.jkalweit.com', 'replace');
-                //}
 
                 $scope.logindisabled = true;
-
+                $scope.newitem = {};
                 var dataRef = new Firebase("https://jkalweit.firebaseio.com");
                 $scope.loginObj = $firebaseSimpleLogin(dataRef);
                 $scope.loginObj.$getCurrentUser().then(function (user) {
@@ -57,6 +62,7 @@
 
                 var tasksRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit/tasks");
                 $scope.tasks = $firebase(tasksRef);
+                $scope.categories = $scope.tasks.$child('categories');
 
                 $scope.login = function () {
                     $scope.logindisabled = true;
@@ -78,22 +84,35 @@
                     $scope.loginObj.$logout();
                 };
 
-                $scope.addtask = function () {
-                    $scope.tasks.$add($scope.newtask).then(function () {
+                $scope.additem = function (catkey) {
+
+                    var category = $scope.categories.$child(catkey)
+                    var items = category.$child('items');
+
+                    items.$add($scope.newitem).then(function () {
                         $scope.status = '';
-                        $scope.newtask = {};
+                        $scope.newitem = {};
                     }, function (error) {
                         $scope.status = 'failed to add task: ' + error;
                     });
                 };
-                $scope.removetask = function (key) {
-                    $scope.tasks.$remove(key).then(function () {
+                $scope.removeitem = function (catkey, itemkey) {
+                    var category = $scope.categories.$child(catkey);
+                    var items = category.$child('items');
+                    items.$remove(itemkey).then(function () {
                         $scope.status = '';
                     }, function (error) {
-                        $scope.status = 'failed to delete task: ' + error;
+                        $scope.status = 'failed to delete item: ' + error;
                     });
                 };
-
+                $scope.addcategory = function () {
+                    $scope.tasks.$child('categories').$add($scope.newcategory).then(function () {
+                        $scope.status = '';
+                        $scope.newcategory = {};
+                    }, function (error) {
+                        $scope.status = 'failed to add category: ' + error;
+                    });
+                };
 
             }
         </script>
