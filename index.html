@@ -1,6 +1,8 @@
-<http ng-app="app">
+<html ng-app="app">
 
     <head>
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+
         <title>Home</title>
         <script src="scripts/vendor/angular.js"></script>
         <script src="scripts/vendor/firebase.js"></script>
@@ -28,15 +30,18 @@
 
                 <div ng-repeat="(catkey, category) in categories">
                     <h3>{{ category.description }}</h3>
-                    <form>
-                        <input ng-model="newitem.description" type="text" ng-enter="additem(catkey)"/>
-                        <button type="submit" ng-click="additem(catkey)">add</button>
-                    </form>
                     <table>
                         <tbody>
                         <tr ng-repeat="(itemkey, item) in category.items">
                             <td style="min-width: 250px;">{{ item.description }}</td>
                             <td><button ng-click="removeitem(catkey, itemkey)">x</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    <input ng-model="newitem.description" type="text" ng-enter="additem(catkey)"/>
+                                </label>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -44,7 +49,7 @@
             </div>
         </div>
         <script>
-            var myApp = angular.module('app', ['firebase']);
+            var myApp = angular.module('app', ['firebase'], null);
 
             myApp.directive('ngEnter', function () {
                 return function (scope, element, attrs) {
@@ -100,7 +105,7 @@
 
                 $scope.additem = function (catkey) {
 
-                    var category = $scope.categories.$child(catkey)
+                    var category = $scope.categories.$child(catkey);
                     var items = category.$child('items');
 
                     items.$add($scope.newitem).then(function () {
@@ -132,4 +137,4 @@
         </script>
     </body>
 
-</http>
+</html>
