@@ -24,17 +24,40 @@
             </div>
             <div ng-show="loginObj.user">
                 <form>
-                    <input ng-model="newcategory.description" type="text"/>
+                    <label>
+                        <input ng-model="newcategory.description" type="text"/>
+                    </label>
                     <button type="submit" ng-click="addcategory()">add category</button>
                 </form>
 
                 <div ng-repeat="(catkey, category) in categories">
-                    <h3>{{ category.description }}</h3>
+                    <div ng-click="editCategory(catkey)">
+                        <div ng-hide="isEditingCategory(catkey)">
+                            <h3>{{ category.description }}</h3>
+                        </div>
+                        <div ng-show="isEditingCategory(catkey)">
+                            <label>
+                                <input ng-model="category.description" ng-enter="updateCategory(catkey, category)" />
+                                <button ng-click="updateCategory(catkey, category)">update</button>
+                                <button ng-click="deleteCategory(catkey)">delete</button>
+                            </label>
+                        </div>
+                    </div>
                     <table>
                         <tbody>
                         <tr ng-repeat="(itemkey, item) in category.items">
-                            <td style="min-width: 250px;">{{ item.description }}</td>
-                            <td><button ng-click="removeitem(catkey, itemkey)">x</button></td>
+                            <td style="min-width: 250px;">
+                                <div ng-click="editItem(itemkey)">
+                                    <span ng-hide="isEditingItem(itemkey)">{{ item.description }}</span>
+                                </div>
+                                <input ng-show="isEditingItem(itemkey)" ng-model="item.description" ng-enter="updateItem(catkey, itemkey, item)" />
+                            </td>
+                            <td>
+                                <div ng-show="isEditingItem(itemkey)">
+                                    <button ng-click="updateItem(catkey, itemkey, item)">update</button>
+                                    <button ng-click="deleteItem(catkey, itemkey)">delete</button>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -103,6 +126,38 @@
                     $scope.loginObj.$logout();
                 };
 
+                $scope.editCategory = function (catkey) {
+                    if(!$scope.editingCategories)
+                        $scope.editingCategories = {};
+                    $scope.editingCategories[catkey] = true;
+                };
+
+                $scope.isEditingCategory = function (catkey) {
+                    if($scope.editingCategories)
+                        return $scope.editingCategories[catkey];
+                    else
+                        return false;
+                };
+
+                $scope.updateCategory = function (catkey, category) {
+                    var cat = $scope.categories.$child(catkey);
+                    cat.$set(category).then(function () {
+                        delete $scope.editingCategories[catkey];
+                    });
+                };
+
+                $scope.deleteCategory = function (catkey) {
+                    if(confirm("Delete category?")){
+                        delete $scope.editingCategories[catkey];
+                        $scope.categories.$remove(catkey);
+                    }
+                };
+
+
+
+
+
+
                 $scope.additem = function (catkey) {
 
                     var category = $scope.categories.$child(catkey);
@@ -115,6 +170,35 @@
                         $scope.status = 'failed to add task: ' + error;
                     });
                 };
+
+                $scope.editItem = function (itemkey) {
+                    if(!$scope.editingItems)
+                        $scope.editingItems = {};
+                    $scope.editingItems[itemkey] = true;
+                };
+
+                $scope.isEditingItem = function (itemkey) {
+                    if($scope.editingItems)
+                        return $scope.editingItems[itemkey];
+                    else
+                        return false;
+                };
+
+                $scope.updateItem = function (catkey, itemkey, item) {
+                    var cat = $scope.categories.$child(catkey);
+                    var itemObj = cat.$child('items').$child(itemkey);
+                    itemObj.$set(item).then(function () {
+                        delete $scope.editingItems[itemkey];
+                    });
+                };
+
+                $scope.deleteItem = function (catkey, itemkey) {
+                    delete $scope.editingItems[itemkey];
+                    var items = $scope.categories.$child(catkey).$child('items');
+                    items.$remove(itemkey);
+                };
+
+
                 $scope.removeitem = function (catkey, itemkey) {
                     var category = $scope.categories.$child(catkey);
                     var items = category.$child('items');
