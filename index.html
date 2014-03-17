@@ -29,7 +29,7 @@
                 <div ng-repeat="(catkey, category) in categories">
                     <h3>{{ category.description }}</h3>
                     <form>
-                        <input ng-model="newitem.description" type="text"/>
+                        <input ng-model="newitem.description" type="text" ng-enter="additem(catkey)"/>
                         <button type="submit" ng-click="additem(catkey)">add</button>
                     </form>
                     <table>
@@ -45,6 +45,20 @@
         </div>
         <script>
             var myApp = angular.module('app', ['firebase']);
+
+            myApp.directive('ngEnter', function () {
+                return function (scope, element, attrs) {
+                    element.bind("keydown keypress", function (event) {
+                        if(event.which === 13) {
+                            scope.$apply(function (){
+                                scope.$eval(attrs.ngEnter);
+                            });
+
+                            event.preventDefault();
+                        }
+                    });
+                };
+            });
 
             function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
 
