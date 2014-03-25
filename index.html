@@ -45,17 +45,26 @@
                     </div>
                     <table>
                         <tbody>
-                        <tr ng-repeat="(itemkey, item) in category.items">
+                        <tr ng-repeat="item in category.items | toArray | orderBy:'eic':true">
                             <td style="min-width: 250px;">
-                                <div ng-click="editItem(itemkey)">
-                                    <span ng-hide="isEditingItem(itemkey)">{{ item.description }}</span>
+                                <div ng-hide="isEditingItem(item.$key)" ng-click="editItem(item.$key)">
+                                    <span style="display: inline-block; width: 150px">{{ item.description }}</span>
+                                    <span>{{ item.ease }}</span>
+                                    <span>x {{ item.impact }}</span>
+                                    <span>x {{ item.cost }}</span>
+                                    <span>= {{ item.eic }}</span>
                                 </div>
-                                <input ng-show="isEditingItem(itemkey)" ng-model="item.description" ng-enter="updateItem(catkey, itemkey, item)" />
+                                <div ng-show="isEditingItem(item.$key)">
+                                    <input ng-model="item.description" ng-enter="updateItem(catkey, item.$key, item)" />
+                                    <select ng-model="item.ease" ng-options="x.value as x.name for x in easeRatings" ></select>
+                                    <select ng-model="item.impact" ng-options="x.value as x.name for x in impactRatings" ></select>
+                                    <select ng-model="item.cost" ng-options="x.value as x.name for x in costRatings" ></select>
+                                </div>
                             </td>
                             <td>
-                                <div ng-show="isEditingItem(itemkey)">
-                                    <button ng-click="updateItem(catkey, itemkey, item)">update</button>
-                                    <button ng-click="deleteItem(catkey, itemkey)">delete</button>
+                                <div ng-show="isEditingItem(item.$key)">
+                                    <button ng-click="updateItem(catkey, item.$key, item)">update</button>
+                                    <button ng-click="deleteItem(catkey, item.$key)">delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -88,11 +97,26 @@
                 };
             });
 
+            myApp.filter('toArray', function () {
+                'use strict';
+
+                return function (obj) {
+                    if (!(obj instanceof Object)) {
+                        return obj;
+                    }
+
+                    return Object.keys(obj).map(function (key) {
+                        return Object.defineProperty(obj[key], '$key', {__proto__: null, value: key});
+                    });
+                }
+            });
+
+
+
             function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
 
 
                 $scope.logindisabled = true;
-                $scope.newitem = {};
                 var dataRef = new Firebase("https://jkalweit.firebaseio.com");
                 $scope.loginObj = $firebaseSimpleLogin(dataRef);
                 $scope.loginObj.$getCurrentUser().then(function (user) {
@@ -155,17 +179,43 @@
 
 
 
+                $scope.easeRatings = [
+                    { value: 10, name: "10 - 1Hr"},
+                    { value: 9, name: "9 - 1/2 Day"},
+                    { value: 7, name: "7 - 1 Day"},
+                    { value: 5, name: "5 - 1 Week"},
+                    { value: 3, name: "3 - 2 Weeks"},
+                    { value: 1, name: "1 - 1 Month"}
+                ];
 
+                $scope.impactRatings = [
+                    { value: 10, name: "10 - $1,000/Month"},
+                    { value: 9, name: "9 - $700/Month"},
+                    { value: 7, name: "7 - $500/Month"},
+                    { value: 5, name: "5 - $300/Month"},
+                    { value: 3, name: "3 - $100/Month"},
+                    { value: 1, name: "1 - $0/Month"}
+                ];
 
+                $scope.costRatings = [
+                    { value: 10, name: "10 - $10"},
+                    { value: 9, name: "9 - $100"},
+                    { value: 7, name: "7 - $500"},
+                    { value: 5, name: "5 - $1,000"},
+                    { value: 3, name: "3 - $5,000"},
+                    { value: 1, name: "1 - $10,000"}
+                ];
 
                 $scope.additem = function (catkey) {
 
                     var category = $scope.categories.$child(catkey);
                     var items = category.$child('items');
 
+                    $scope.updateItemEIC($scope.newitem);
+
                     items.$add($scope.newitem).then(function () {
                         $scope.status = '';
-                        $scope.newitem = {};
+                        $scope.resetNewItem();
                     }, function (error) {
                         $scope.status = 'failed to add task: ' + error;
                     });
@@ -177,6 +227,10 @@
                     $scope.editingItems[itemkey] = true;
                 };
 
+                $scope.resetNewItem = function () {
+                    $scope.newitem = { ease: 1, impact: 1, cost: 1 };
+                };
+
                 $scope.isEditingItem = function (itemkey) {
                     if($scope.editingItems)
                         return $scope.editingItems[itemkey];
@@ -185,11 +239,16 @@
                 };
 
                 $scope.updateItem = function (catkey, itemkey, item) {
+                    $scope.updateItemEIC(item);
                     var cat = $scope.categories.$child(catkey);
                     var itemObj = cat.$child('items').$child(itemkey);
                     itemObj.$set(item).then(function () {
                         delete $scope.editingItems[itemkey];
                     });
+                };
+
+                $scope.updateItemEIC = function (item) {
+                    item.eic = item.ease * item.impact * item.cost;
                 };
 
                 $scope.deleteItem = function (catkey, itemkey) {
@@ -216,6 +275,16 @@
                         $scope.status = 'failed to add category: ' + error;
                     });
                 };
+
+                $scope.itemsToArray = function (items) {
+                    var array = [];
+                    angular.forEach(items, function(item) {
+                        array.push(item);
+                    });
+                    return array;
+                };
+
+                $scope.resetNewItem();
 
             }
         </script>
