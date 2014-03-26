@@ -19,9 +19,35 @@
             <div class="modal-header">
                 <h3>Edit Member</h3>
             </div>
-            <div class="modal-body">
-                <input ng-model="member.firstname" />
-                <input ng-model="member.lastname" />
+            <div class="modal-body" ng-enter="ok()">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input ng-model="member.firstname" type="text" class="form-control" id="firstname" />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input ng-model="member.lastname" type="text" class="form-control" id="lastname" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input ng-model="member.email" type="email" class="form-control" id="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input ng-model="member.phone" type="tel" class="form-control" id="phone" />
+                    </div>
+                    <div class="form-group">
+                        <label for="membernumber">Member Number</label>
+                        <input ng-model="member.membernumber" type="number" class="form-control" id="membernumber" />
+                    </div>
+                    <div class="form-group">
+                        <label for="office">Current Office</label>
+                        <select class="form-control" id="office" ng-model="member.office" ng-options="o for o in offices">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -29,17 +55,38 @@
             </div>
         </script>
 
-        <h1>hello ybaic.<small ng-show="loginObj.user"> u r logged in.</small></h1>
+        <h1>hello ybaic.
+            <small ng-hide="loginObj.user"> i don't know u.</small>
+            <small ng-show="loginObj.user"> u r logged in.</small>
+        </h1>
         <h5>- {{ status }} -</h5>
         <div ng-show="loginObj.user">
-            <div class="row" id="newmember">
-                <input class="col-xs-5 col-md-2" ng-model="newmember.firstname" />
-                <input class="col-xs-5 col-md-2" ng-model="newmember.lastname" />
-                <button class="col-xs-2 col-md-2" ng-click="addMember()">Add Member</button>
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Office</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th class="hidden-xs">Email</th>
+                            <th class="hidden-xs">Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr  ng-repeat="member in ybaic.members | toArray | orderBy:'membernumber'" ng-click="editMember(member.$key, member)">
+                            <td class="col-xs-1 col-sm-1">{{ member.membernumber }}</td>
+                            <td class="col-xs-2 col-sm-1">{{ member.office }}</td>
+                            <td class="col-xs-4 col-sm-2">{{ member.firstname }}</td>
+                            <td class="col-xs-4 col-sm-2">{{ member.lastname }}</td>
+                            <td class="hidden-xs col-sm-2">{{ member.email }}</td>
+                            <td class="hidden-xs col-sm-2">{{ member.phone }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="row" ng-repeat="(key, member) in members" ng-click="editMember(key, member)">
-                <div class="col-xs-5 col-md-2">{{ member.firstname }}</div>
-                <div class="col-xs-5 col-md-2">{{ member.lastname }}</div>
+            <div class="row">
+                <button class="btn bt-default col-xs-12 col-md-6" ng-click="addMember()">Add Member</button>
             </div>
         </div>
     </div>
@@ -93,11 +140,9 @@
         $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
         $scope.members = $scope.ybaic.$child('members');
 
+
         $scope.addMember = function () {
-            $scope.members.$add($scope.newmember).then(function() {
-                $scope.status = 'Member added.';
-                $scope.newmember = {};
-            });
+            $scope.editMember(null, {});
         }
         $scope.deleteMember = function (key) {
             if(confirm('Are you sure you want to delete this member?')) {
@@ -108,7 +153,7 @@
             $scope.editmember = member;
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
-                controller: ModalInstanceCtrl,
+                controller: MemberEditCtrl,
                 resolve: {
                     member: function () {
                         return $scope.editmember
@@ -117,23 +162,36 @@
             });
 
             modalInstance.result.then(function (member) {
-                $scope.members.$child(key).$set(member).then(function() {
-                            $scope.status = 'Saved changes to member.'
-                        },
-                        function(error) {
-                            $scope.status = 'FAILED to saved changes to member: ' + error;
-                        }
-                );
+                if(!key) {
+                    $scope.members.$add(member).then(function() {
+                                $scope.status = 'Member added.';
+                            },
+                            function(error) {
+                                $scope.status = 'FAILED to add member: ' + error;
+                            }
+                    );
+                } else {
+                    $scope.members.$child(key).$set(member).then(function() {
+                                $scope.status = 'Saved changes to member.'
+                            },
+                            function(error) {
+                                $scope.status = 'FAILED to saved changes to member: ' + error;
+                            }
+                    );
+                }
             }, function () {
                 $scope.status = 'Edit canceled.'
             });
         };
 
 
-        var ModalInstanceCtrl = function ($scope, $modalInstance, member) {
+        var MemberEditCtrl = function ($scope, $modalInstance, member) {
 
             $scope.member = {};
             angular.copy(member, $scope.member);
+
+            $scope.offices = ['President', 'VP', 'Suckretary', 'IC'];
+            $scope.committees = ['IC'];
 
             $scope.ok = function () {
                 $modalInstance.close($scope.member);
