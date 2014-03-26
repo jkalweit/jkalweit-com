@@ -1,9 +1,10 @@
+<!DOCTYPE html>
 <html ng-app="app">
 
     <head>
         <meta name="viewport" content="width=device-width, user-scalable=no">
 
-        <title>Home</title>
+        <title>jkalweit - home</title>
         <script src="scripts/vendor/angular.js"></script>
         <script src="scripts/vendor/firebase.js"></script>
         <script src="scripts/vendor/firebase-simple-login.js"></script>
@@ -81,9 +82,9 @@
             </div>
         </div>
         <script>
-            var myApp = angular.module('app', ['firebase'], null);
+            var app = angular.module('app', ['firebase'], null);
 
-            myApp.directive('ngEnter', function () {
+            app.directive('ngEnter', function () {
                 return function (scope, element, attrs) {
                     element.bind("keydown keypress", function (event) {
                         if(event.which === 13) {
@@ -97,7 +98,7 @@
                 };
             });
 
-            myApp.filter('toArray', function () {
+            app.filter('toArray', function () {
                 'use strict';
 
                 return function (obj) {

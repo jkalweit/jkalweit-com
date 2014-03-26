@@ -1,3 +1,3 @@
 jkalweit-com
 ============
-And this too!
+Personal website using angularjs, firebase and angularfire.
