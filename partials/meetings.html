@@ -1,0 +1,80 @@
+<div class="container">
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3>Edit Meeting</h3>
+        </div>
+        <div class="modal-body" ng-enter="ok()">
+            <form role="form">
+                <div class="form-group">
+                    <label for="meetingnumber">Meeting Number</label>
+                    <input ng-model="meeting.meetingnumber" type="number" class="form-control" id="meetingnumber" />
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input ng-model="meeting.location" type="text" class="form-control" id="location" />
+                </div>
+                <div class="form-group">
+                    <p class="input-group">
+                        <label for="date">Date</label>
+                        <input id="date" type="text" class="form-control" datepicker-popup="{{format}}" ng-model="meeting.date" is-open="opened" min="2013-05-01" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="host">Host 1</label>
+                    <select class="form-control" ng-model="meeting.host1" id="host" ng-options="m for m in members">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="host2">Host 2</label>
+                    <select class="form-control" ng-model="meeting.host2" id="host2" ng-options="m for m in members">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            <div class="form-group">
+                <label for="minutes">Minutes</label>
+                <textarea ng-model="meeting.minutes" class="form-control" id="minutes" rows="20"/>
+            </div>
+        </div>
+    </script>
+
+    <h1>meetings</h1>
+
+    <h5>- {{ status }} -</h5>
+    <div ng-show="loginObj.user">
+        <div class="row">
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th class="hidden-xs">Host 1</th>
+                    <th class="hidden-xs">Host 2</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr  ng-repeat="meeting in ybaic.meetings | toArray | orderBy:'meetingnumber':true">
+                        <td class="col-xs-1 col-sm-1"><a ng-click="editMeeting(meeting.$key, meeting)">{{ meeting.meetingnumber }}</a></td>
+                        <td class="col-xs-4 col-sm-2"><a ng-href="#meeting/{{ meeting.$key }}">{{ meeting.date | date:'MMMM dd, yyyy' }}</a></td>
+                        <td class="col-xs-5 col-sm-3">{{ meeting.location }}</td>
+                        <td class="hidden-xs col-sm-2">{{ meeting.host1 }}</td>
+                        <td class="hidden-xs col-sm-2">{{ meeting.host2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <button class="btn bt-default col-xs-12 col-md-6" ng-click="addMeeting()">Add Meeting</button>
+        </div>
+    </div>
+</div>

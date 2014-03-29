@@ -1,0 +1,72 @@
+<div class="container">
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3>Edit Member</h3>
+        </div>
+        <div class="modal-body" ng-enter="ok()">
+            <form role="form">
+                <div class="form-group">
+                    <label for="firstname">First Name</label>
+                    <input ng-model="member.firstname" type="text" class="form-control" id="firstname" />
+                </div>
+                <div class="form-group">
+                    <label for="lastname">Last Name</label>
+                    <input ng-model="member.lastname" type="text" class="form-control" id="lastname" />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input ng-model="member.email" type="email" class="form-control" id="email" />
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input ng-model="member.phone" type="tel" class="form-control" id="phone" />
+                </div>
+                <div class="form-group">
+                    <label for="membernumber">Member Number</label>
+                    <input ng-model="member.membernumber" type="number" class="form-control" id="membernumber" />
+                </div>
+                <div class="form-group">
+                    <label for="office">Current Office</label>
+                    <select class="form-control" id="office" ng-model="member.office" ng-options="o for o in offices">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+    <h1>members</h1>
+    <h5>- {{ status }} -</h5>
+    <div ng-show="loginObj.user">
+        <div class="row">
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th class="hidden-xs">Office</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th class="hidden-xs">Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr  ng-repeat="member in ybaic.members | toArray | orderBy:'membernumber'">
+                    <td class="col-xs-1 col-sm-1">{{ member.membernumber }}</td>
+                    <td class="hidden-xs col-sm-2">{{ member.office }}</td>
+                    <td class="col-xs-5 col-sm-4"><a ng-click="editMember(member.$key, member)">{{ member.firstname + ' ' + member.lastname }}</a></td>
+                    <td class="col-xs-5 col-sm-3"><a ng-href="tel:{{ member.phone }}">{{ member.phone }}</a></td>
+                    <td class="hidden-xs col-sm-2"><a ng-href="mailto:{{ member.email }}">{{ member.email }}</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <button class="btn bt-default col-xs-12 col-md-6" ng-click="addMember()">Add Member</button>
+        </div>
+    </div>
+</div>

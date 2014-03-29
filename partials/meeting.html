@@ -1,0 +1,178 @@
+<div class="container">
+
+    <div class="row">
+        <h1>{{ meeting.date  | date:'MMMM dd, yyyy' }}</h1>
+    </div>
+    <div class="row"><h3>{{ meeting.location }}</h3></div>
+    <div class="row">
+        <h4>Hosts: </h4>
+        <h4>{{ meeting.host1 }}</h4>
+        <h4>{{ meeting.host2 }}</h4>
+    </div>
+
+    <br />
+
+    <div class="row">
+        <tabset>
+
+            <tab heading="Finances">
+                <button class="btn btn-default" ng-click="updateFinanceTotals()">Update Totals</button>
+                <button class="btn btn-default" ng-click="saveFinances()">Save Finances</button>
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <td class="col-xs-2">Buyins:</td>
+                            <td class="col-xs-1">{{ finances.totals.buyins | currency }}</td>
+                            <td class="col-xs-9"></td>
+                        </tr>
+                        <tr>
+                            <td>Dues:</td>
+                            <td>{{ finances.totals.dues | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Fines:</td>
+                            <td>{{ finances.totals.fines | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-xs-1">Guests:</td>
+                            <td class="col-xs-1">{{ finances.totals.guests | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Total:</b></td>
+                            <td><b>{{ finances.totals.totalDue | currency }}</b></td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Cash:</td>
+                            <td>{{ finances.totals.cash | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Check:</td>
+                            <td>{{ finances.totals.check | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Draft:</td>
+                            <td>{{ finances.totals.draft | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Collected:</td>
+                            <td><b>{{ finances.totals.totalCollected | currency }}</b></td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Cash Payouts:</td>
+                            <td>{{ finances.totals.cashPayouts | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Bank Deposit:</td>
+                            <td><b>{{ finances.totals.bankDeposit | currency }}</b></td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Check Payouts:</td>
+                            <td>{{ finances.totals.checkPayouts | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>Net Change:</td>
+                            <td><b>{{ finances.totals.netChange | currency }}</b></td>
+                        </tr>
+                        <tr>
+                            <td>Beginning Balance:</td>
+                            <td><input type="text" size="6" ng-model="finances.beginningBalance" /></td>
+                        </tr>
+                        <tr>
+                            <td>Ending Balance:</td>
+                            <td><b>{{ finances.totals.endingBalance | currency }}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr/>
+
+                <button ng-click="addPayout()">Add Payout</button>
+                <table>
+                    <thead>
+                        <th>Payout</th>
+                        <th>Note</th>
+                        <th>Type</th>
+                        <th>Expense</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="(key, payout) in payouts">
+                            <td><input type="number" ng-model="payout.amount" /></td>
+                            <td><input type="text" size="45" ng-model="payout.note" /></td>
+                            <td>
+                                <select ng-model="payout.type">
+                                    <option>Cash</option>
+                                    <option>Check</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select ng-model="payout.expense">
+                                    <option>Stock</option>
+                                    <option>Food</option>
+                                    <option>Supplies</option>
+                                </select>
+                            </td>
+                            <td><button class="btn btn-default" ng-click="removePayout(key)">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </tab>
+
+
+
+            <tab heading="Attendance">
+                <button class="btn btn-default" ng-click="attachMembers()">Attach Members</button>
+                <button class="btn btn-default" ng-click="saveAttendance()">Save Attendance</button>
+                <table class="table table-condensed">
+                    <thead>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Attendance</th>
+                        <th>Buy-In</th>
+                        <th>Dues</th>
+                        <th>Fines</th>
+                        <th>Guests</th>
+                        <th>Cash</th>
+                        <th>Check</th>
+                        <th>Draft</th>
+                    </thead>
+                    <tbody>
+                        <tr  ng-repeat="member in meeting.attendance | toArray | orderBy:getMemberNumber">
+                            <td>{{ members[member.key].membernumber }}</td>
+                            <td>{{ members[member.key].firstname + ' ' + members[member.key].lastname }}</td>
+                            <td><input type="checkbox" ng-model="member.attendance" /></td>
+                            <td><input type="text" size="5" ng-model="member.buyin" /></td>
+                            <td><input type="text" size="5" ng-model="member.dues" /></td>
+                            <td><input type="text" size="5" ng-model="member.fines" /></td>
+                            <td><input type="text" size="5" ng-model="member.guests" /></td>
+                            <td><input type="text" size="5" ng-model="member.cash" /></td>
+                            <td><input type="text" size="5" ng-model="member.check" /></td>
+                            <td><input type="text" size="5" ng-model="member.draft" /></td>
+                            <td><button class="btn btn-default" ng-click="removeMember(member.key)">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </tab>
+
+            <tab heading="Minutes">
+                <pre class="col-xs-12 col-md-8" style="">{{ meeting.minutes }}</pre>
+            </tab>
+
+        </tabset>
+    </div>
+
+
+
+</div>
