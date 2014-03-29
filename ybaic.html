@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <title>ybaic - home</title>
+    <title>ybaic</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
@@ -24,12 +24,14 @@
                 <a class="navbar-brand" href="#">ybaic</a>
             </div>
             <div class="collapse navbar-collapse" collapse="navCollapsed">
-                <ul class="nav navbar-nav">
-                    <li><a href="#meetings">meetings</a></li>
+                <ul class="nav navbar-nav" ng-show="loginObj.user">
+
                     <li><a href="#members">members</a></li>
+                    <li><a href="#meetings">meetings</a></li>
+                    <!--<li><a href="" ng-click="doTest()">doTest()</a></li>-->
                 </ul>
-                <p class="navbar-text navbar-right" ng-hide="loginObj.user">i don't know u.</p>
-                <p class="navbar-text navbar-right" ng-show="loginObj.user">u r logged in.</p>
+                <p class="navbar-text navbar-right" ng-hide="loginObj.user">try <a href="#">logging in</a>.</p>
+                <p class="navbar-text navbar-right" ng-show="loginObj.user">{{ loginObj.user.email }} - <a ng-click="logout()" href="">logout</a></p>
             </div><!--/.nav-collapse -->
         </div>
     </div>
@@ -79,7 +81,8 @@
         function($routeProvider) {
             $routeProvider.
                     when('/', {
-                        templateUrl: 'partials/home.html'
+                        templateUrl: 'partials/home.html',
+                        controller: 'HomeCtrl'
                     }).
                     when('/meetings', {
                         templateUrl: 'partials/meetings.html',
@@ -90,8 +93,7 @@
                     }).when('/members', {
                         templateUrl: 'partials/members.html',
                         controller: 'MembersCtrl'
-                    }).
-                    otherwise({
+                    }).otherwise({
                         redirectTo: '/'
                     });
         }]);

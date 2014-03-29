@@ -15,6 +15,47 @@
     <div class="row">
         <tabset>
 
+
+            <tab heading="Minutes">
+                <pre class="col-xs-12 col-md-8" style="">{{ meeting.minutes }}</pre>
+            </tab>
+
+
+            <tab heading="Attendance">
+                <button class="btn btn-default" ng-click="attachMembers()">Attach Members</button>
+                <button class="btn btn-default" ng-click="saveAttendance()">Save Attendance</button>
+                <table class="table table-condensed">
+                    <thead>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Attendance</th>
+                    <th>Buy-In</th>
+                    <th>Dues</th>
+                    <th>Fines</th>
+                    <th>Guests</th>
+                    <th>Cash</th>
+                    <th>Check</th>
+                    <th>Draft</th>
+                    </thead>
+                    <tbody>
+                    <tr  ng-repeat="member in meeting.attendance | toArray | orderBy:getMemberNumber">
+                        <td>{{ members[member.key].membernumber }}</td>
+                        <td>{{ members[member.key].firstname + ' ' + members[member.key].lastname }}</td>
+                        <td><input type="checkbox" ng-model="member.attendance" /></td>
+                        <td><input type="text" size="5" ng-model="member.buyin" /></td>
+                        <td><input type="text" size="5" ng-model="member.dues" /></td>
+                        <td><input type="text" size="5" ng-model="member.fines" /></td>
+                        <td><input type="text" size="5" ng-model="member.guests" /></td>
+                        <td><input type="text" size="5" ng-model="member.cash" /></td>
+                        <td><input type="text" size="5" ng-model="member.check" /></td>
+                        <td><input type="text" size="5" ng-model="member.draft" /></td>
+                        <td><button class="btn btn-default" ng-click="removeMember(member.key)">X</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </tab>
+
+
             <tab heading="Finances">
                 <button class="btn btn-default" ng-click="updateFinanceTotals()">Update Totals</button>
                 <button class="btn btn-default" ng-click="saveFinances()">Save Finances</button>
@@ -131,44 +172,6 @@
             </tab>
 
 
-
-            <tab heading="Attendance">
-                <button class="btn btn-default" ng-click="attachMembers()">Attach Members</button>
-                <button class="btn btn-default" ng-click="saveAttendance()">Save Attendance</button>
-                <table class="table table-condensed">
-                    <thead>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Attendance</th>
-                        <th>Buy-In</th>
-                        <th>Dues</th>
-                        <th>Fines</th>
-                        <th>Guests</th>
-                        <th>Cash</th>
-                        <th>Check</th>
-                        <th>Draft</th>
-                    </thead>
-                    <tbody>
-                        <tr  ng-repeat="member in meeting.attendance | toArray | orderBy:getMemberNumber">
-                            <td>{{ members[member.key].membernumber }}</td>
-                            <td>{{ members[member.key].firstname + ' ' + members[member.key].lastname }}</td>
-                            <td><input type="checkbox" ng-model="member.attendance" /></td>
-                            <td><input type="text" size="5" ng-model="member.buyin" /></td>
-                            <td><input type="text" size="5" ng-model="member.dues" /></td>
-                            <td><input type="text" size="5" ng-model="member.fines" /></td>
-                            <td><input type="text" size="5" ng-model="member.guests" /></td>
-                            <td><input type="text" size="5" ng-model="member.cash" /></td>
-                            <td><input type="text" size="5" ng-model="member.check" /></td>
-                            <td><input type="text" size="5" ng-model="member.draft" /></td>
-                            <td><button class="btn btn-default" ng-click="removeMember(member.key)">X</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </tab>
-
-            <tab heading="Minutes">
-                <pre class="col-xs-12 col-md-8" style="">{{ meeting.minutes }}</pre>
-            </tab>
 
         </tabset>
     </div>

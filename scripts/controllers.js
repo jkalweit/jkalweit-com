@@ -2,12 +2,62 @@
  * Created by jkalweit on 3/28/2014.
  */
 
-function MainCtrl($scope, $firebase, $firebaseSimpleLogin) {
+function MainCtrl($scope, $location, $firebaseSimpleLogin) {
 
     var dataRef = new Firebase("https://jkalweit.firebaseio.com");
     $scope.loginObj = $firebaseSimpleLogin(dataRef);
 
+    if($location.path() != '/') {
+        $scope.loginObj.$getCurrentUser().then(function (user) {
+            if(!user)
+                $location.path('/');
+        });
+    }
+
+    $scope.logout = function () {
+        $scope.loginObj.$logout();
+        $location.path('/');
+    };
+
+//    $scope.doTest = function () {
+//        $scope.loginObj.$changePassword('kalweit@alumni.duke.edu', 'password', '2580Juicet');
+//    };
+
 }
+
+function HomeCtrl($scope, $firebaseSimpleLogin) {
+
+    $scope.logindisabled = true;
+    var dataRef = new Firebase("https://jkalweit.firebaseio.com");
+    $scope.loginObj = $firebaseSimpleLogin(dataRef);
+    $scope.loginObj.$getCurrentUser().then(function () {
+        $scope.logindisabled = false;
+    }, function () {
+        $scope.logindisabled = false;
+    });
+
+    $scope.loginGoogle = function () {
+        $scope.loginObj.$login('google');
+    }
+
+    $scope.login = function () {
+        $scope.logindisabled = true;
+        $scope.status = 'Logging in...';
+        $scope.loginObj.$login('password', {
+            email: $scope.userlogin.email,
+            password: $scope.userlogin.password
+        }).then(function (user) {
+                $scope.status = '';
+                $scope.logindisabled = false;
+            },
+            function (error) {
+                $scope.status = 'Failed to login: ' + error;
+                $scope.logindisabled = false;
+            });
+    };
+
+}
+
 
 function MembersCtrl($scope, $firebase, $modal) {
 

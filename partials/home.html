@@ -1,5 +1,27 @@
-<div class="container">
+<div class="jumbotron">
+    <h1>hello.</h1>
+    <p>this is a custom app for an investment club.</p>
 
-    <h1>home</h1>
+    <div class="container">
+
+        <h5>{{ status }}</h5>
+        <div class="row">
+            <div ng-hide="loginObj.user">
+                <h3>try logging in:</h3>
+                <form>
+                    <input ng-disabled="logindisabled" type="email" ng-model="userlogin.email" placeholder="email" />
+                    <input ng-disabled="logindisabled" type="password" ng-model="userlogin.password" placeholder="password" />
+                    <button ng-disabled="logindisabled" type="submit" ng-click="login()">login</button>
+                </form>
+                <!--<p>-->
+                    <!--or login with <a href="" ng-click="loginGoogle()">google+</a>.-->
+                <!--</p>-->
+            </div>
+            <div ng-show="loginObj.user">
+                <h3>{{ loginObj.user.email }} is logged in.</h3>
+            </div>
+        </div>
+
+    </div>
 
 </div>
