@@ -1,0 +1,13 @@
+<div class="container">
+
+    <div class="row">
+        <h1>{{ member.firstname + ' ' + member.lastname }}</h1>
+        <button ng-click="updateMember()">Update</button>
+    </div>
+
+    <div class="row" ng-repeat="meeting in member.meetings">
+        <h3>{{ ybaic.meetings[meeting.key].date | date:'MMMM dd, yyyy' }}</h3>
+
+    </div>
+
+</div>

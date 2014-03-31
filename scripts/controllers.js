@@ -58,10 +58,35 @@ function HomeCtrl($scope, $firebaseSimpleLogin) {
 
 }
 
+function MemberCtrl($scope, $routeParams, $firebase) {
+
+
+
+    $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
+
+    $scope.memberkey = $routeParams.id;
+    $scope.member = $scope.ybaic.$child('members/' + $scope.memberkey);
+
+
+    $scope.updateMember = function () {
+
+        if(!$scope.member.meetings)
+            $scope.member.meetings = {};
+
+        var meeting;
+        for(var key in $scope.ybaic.meetings) {
+            meeting = $scope.ybaic.meetings[key];
+            if(meeting.attendance[$scope.memberkey]) {
+                $scope.member.meetings[key] = {
+                    key: key
+                };
+            }
+        }
+    };
+
+}
 
 function MembersCtrl($scope, $firebase, $modal) {
-
-    var dataRef = new Firebase("https://jkalweit.firebaseio.com");
 
     $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
     $scope.members = $scope.ybaic.$child('members');

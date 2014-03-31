@@ -93,6 +93,9 @@
                     }).when('/members', {
                         templateUrl: 'partials/members.html',
                         controller: 'MembersCtrl'
+                    }).when('/members/:id', {
+                        templateUrl: 'partials/member.html',
+                        controller: 'MemberCtrl'
                     }).otherwise({
                         redirectTo: '/'
                     });

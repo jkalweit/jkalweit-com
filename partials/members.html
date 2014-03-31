@@ -58,7 +58,7 @@
                 <tr  ng-repeat="member in ybaic.members | toArray | orderBy:'membernumber'">
                     <td class="col-xs-1 col-sm-1">{{ member.membernumber }}</td>
                     <td class="hidden-xs col-sm-2">{{ member.office }}</td>
-                    <td class="col-xs-5 col-sm-4"><a ng-click="editMember(member.$key, member)">{{ member.firstname + ' ' + member.lastname }}</a></td>
+                    <td class="col-xs-5 col-sm-4"><a ng-href="#members/{{ member.$key }}">{{ member.firstname + ' ' + member.lastname }}</a></td>
                     <td class="col-xs-5 col-sm-3"><a ng-href="tel:{{ member.phone }}">{{ member.phone }}</a></td>
                     <td class="hidden-xs col-sm-2"><a ng-href="mailto:{{ member.email }}">{{ member.email }}</a></td>
                 </tr>
