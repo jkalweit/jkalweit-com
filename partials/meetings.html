@@ -51,30 +51,26 @@
 
     <h5>- {{ status }} -</h5>
     <div ng-show="loginObj.user">
-        <div class="row">
-            <table class="table table-condensed">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Location</th>
-                    <th class="hidden-xs">Host 1</th>
-                    <th class="hidden-xs">Host 2</th>
+        <button class="btn btn-default" ng-click="addMeeting()">Add Meeting</button>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th class="hidden-xs">Host 1</th>
+                <th class="hidden-xs">Host 2</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr  ng-repeat="meeting in ybaic.meetings | toArray | orderBy:'meetingnumber':true">
+                    <td class="col-xs-1 col-sm-1"><a ng-click="editMeeting(meeting.$key, meeting)">{{ meeting.meetingnumber }}</a></td>
+                    <td class="col-xs-4 col-sm-2"><a ng-href="#meeting/{{ meeting.$key }}">{{ meeting.date | date:'MMMM dd, yyyy' }}</a></td>
+                    <td class="col-xs-5 col-sm-3">{{ meeting.location }}</td>
+                    <td class="hidden-xs col-sm-2">{{ meeting.host1 }}</td>
+                    <td class="hidden-xs col-sm-2">{{ meeting.host2 }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                    <tr  ng-repeat="meeting in ybaic.meetings | toArray | orderBy:'meetingnumber':true">
-                        <td class="col-xs-1 col-sm-1"><a ng-click="editMeeting(meeting.$key, meeting)">{{ meeting.meetingnumber }}</a></td>
-                        <td class="col-xs-4 col-sm-2"><a ng-href="#meeting/{{ meeting.$key }}">{{ meeting.date | date:'MMMM dd, yyyy' }}</a></td>
-                        <td class="col-xs-5 col-sm-3">{{ meeting.location }}</td>
-                        <td class="hidden-xs col-sm-2">{{ meeting.host1 }}</td>
-                        <td class="hidden-xs col-sm-2">{{ meeting.host2 }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="row">
-            <button class="btn bt-default col-xs-12 col-md-6" ng-click="addMeeting()">Add Meeting</button>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>

@@ -37,13 +37,20 @@
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea ng-model="member.notes" class="form-control" id="notes" />
+            </div>
         </div>
     </script>
 
     <h1>members</h1>
     <h5>- {{ status }} -</h5>
-    <div ng-show="loginObj.user">
-        <div class="row">
+    <tabset>
+
+
+        <tab heading="Contact Information">
+            <button class="btn btn-default" ng-click="addMember()">Add Member</button>
             <table class="table table-condensed">
                 <thead>
                 <tr>
@@ -56,7 +63,7 @@
                 </thead>
                 <tbody>
                 <tr  ng-repeat="member in ybaic.members | toArray | orderBy:'membernumber'">
-                    <td class="col-xs-1 col-sm-1">{{ member.membernumber }}</td>
+                    <td class="col-xs-1 col-sm-1"><a ng-click="editMember(member.$key, member)">{{ member.membernumber }}</a></td>
                     <td class="hidden-xs col-sm-2">{{ member.office }}</td>
                     <td class="col-xs-5 col-sm-4"><a ng-href="#members/{{ member.$key }}">{{ member.firstname + ' ' + member.lastname }}</a></td>
                     <td class="col-xs-5 col-sm-3"><a ng-href="tel:{{ member.phone }}">{{ member.phone }}</a></td>
@@ -64,9 +71,35 @@
                 </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="row">
-            <button class="btn bt-default col-xs-12 col-md-6" ng-click="addMember()">Add Member</button>
-        </div>
-    </div>
+        </tab>
+
+        <tab heading="Finances">
+            <button class="btn btn-default" ng-click="updateMembers()">Update Members</button>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Attendance</th>
+                        <th>Due</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr  ng-repeat="member in ybaic.members | toArray | orderBy:'membernumber'">
+                        <td class="col-xs-1 col-sm-1">{{ member.membernumber }}</td>
+                        <td class="col-xs-3"><a ng-href="#members/{{ member.$key }}">{{ member.firstname + ' ' + member.lastname }}</a></td>
+                        <td class="col-xs-1">{{ member.totals.meetingsAttended }} of {{ member.totals.meetings }}</a></td>
+                        <td class="col-xm-1">{{ member.totals.totalDue | currency }}</td>
+                        <td class="col-xm-1">{{ member.totals.totalPaid | currency }}</td>
+                        <td class="col-xm-1">{{ member.totals.totalBalance | currency }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </tab>
+
+    </tabset>
+
+
 </div>

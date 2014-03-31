@@ -1,14 +1,86 @@
 <div class="container">
 
     <div class="row">
-        <h1>{{ member.firstname + ' ' + member.lastname }}</h1>
-        <button ng-click="updateMember()">Update</button>
+        <div class="col-sm-4">
+            <h1>{{ member.firstname + ' ' + member.lastname }}</h1>
+            <h3>{{ member.office }}</h3>
+            <h4>Member Number: {{ member.membernumber }}</h4>
+            <h4><a ng-href="tel:{{ member.phone }}">{{ member.phone }}</a></h4>
+            <h4><a ng-href="mailto:{{ member.email }}">{{ member.email }}</a></h4>
+        </div>
+        <div class="col-sm-4">
+            <h3>Notes:</h3>
+            <pre>{{ member.notes }}</pre>
+        </div>
+        <div class="col-sm-4">
+            <h3>Totals</h3>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>Attendance:</th>
+                    <td>{{ member.totals.meetingsAttended }} of {{ member.totals.meetings }}</td>
+                </tr>
+                <tr>
+                    <th>Due:</th>
+                    <td>{{ member.totals.totalDue | currency }}</td>
+                </tr>
+                <tr>
+                    <th>Paid:</th>
+                    <td>{{ member.totals.totalPaid | currency }}</td>
+                </tr>
+                <tr>
+                    <th>Balance:</th>
+                    <td><b>{{ member.totals.totalBalance | currency }}</b></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="row" ng-repeat="meeting in member.meetings">
-        <h3>{{ ybaic.meetings[meeting.key].date | date:'MMMM dd, yyyy' }}</h3>
 
+    <h2>Meetings</h2>
 
-    </div>
+    <table class="table table-condensed">
+        <thead>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Attendance</th>
+            <th>Buy-In</th>
+            <th>Dues</th>
+            <th>Fines</th>
+            <th>Guests</th>
+            <th>Paid</th>
+        </thead>
+        <tbody>
+            <tr style="font-weight: bold">
+                <td></td>
+                <td></td>
+                <td>{{ member.totals.meetingsAttended }} of {{ member.totals.meetings }}</td>
+                <td>{{ member.totals.buyins | currency }}</td>
+                <td>{{ member.totals.dues | currency }}</td>
+                <td>{{ member.totals.fines | currency }}</td>
+                <td>{{ member.totals.guests | currency }}</td>
+                <td>{{ member.totals.totalPaid | currency }}</td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr ng-repeat="meeting in member.meetings | toArray | orderBy:getMeetingNumber:true">
+                <td><a ng-href="#meeting/{{ meeting.key }}">{{ ybaic.meetings[meeting.key].date | date:'MMMM dd, yyyy' }}</a></td>
+                <td>{{ ybaic.meetings[meeting.key].location }}</td>
+                <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].attendance | checkmark }}</td>
+                <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].buyin | currency }}</td>
+                <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].dues | currency }}</td>
+                <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].fines | currency }}</td>
+                <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].guests | currency }}</td>
+                <td>
+                    {{
+                       ybaic.meetings[meeting.key].attendance[memberkey].cash +
+                       ybaic.meetings[meeting.key].attendance[memberkey].check +
+                       ybaic.meetings[meeting.key].attendance[memberkey].draft | currency
+                    }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
 </div>

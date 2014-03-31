@@ -59,53 +59,61 @@
             <tab heading="Finances">
                 <button class="btn btn-default" ng-click="updateFinanceTotals()">Update Totals</button>
                 <button class="btn btn-default" ng-click="saveFinances()">Save Finances</button>
-                <table class="table table-condensed">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4>Due</h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td>Buyins:</td>
+                                    <td>{{ finances.totals.buyins | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Dues:</td>
+                                    <td>{{ finances.totals.dues | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Fines:</td>
+                                    <td>{{ finances.totals.fines | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Guests:</td>
+                                    <td>{{ finances.totals.guests | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Total:</b></td>
+                                    <td><b>{{ finances.totals.totalDue | currency }}</b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-4">
+                        <h4>Collected</h4>
+                        <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <td>Cash:</td>
+                                <td>{{ finances.totals.cash | currency }}</td>
+                            </tr>
+                            <tr>
+                                <td>Check:</td>
+                                <td>{{ finances.totals.check | currency }}</td>
+                            </tr>
+                            <tr>
+                                <td>Draft:</td>
+                                <td>{{ finances.totals.draft | currency }}</td>
+                            </tr>
+                            <tr>
+                                <td>Collected:</td>
+                                <td><b>{{ finances.totals.totalCollected | currency }}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <div class="col-sm-4">
+                        <h4>Reconciliation</h4>
+                        <table class="table table-condensed">
                     <tbody>
-                        <tr>
-                            <td class="col-xs-2">Buyins:</td>
-                            <td class="col-xs-1">{{ finances.totals.buyins | currency }}</td>
-                            <td class="col-xs-9"></td>
-                        </tr>
-                        <tr>
-                            <td>Dues:</td>
-                            <td>{{ finances.totals.dues | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Fines:</td>
-                            <td>{{ finances.totals.fines | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-xs-1">Guests:</td>
-                            <td class="col-xs-1">{{ finances.totals.guests | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Total:</b></td>
-                            <td><b>{{ finances.totals.totalDue | currency }}</b></td>
-                        </tr>
-                        <tr>
-                            <td>-</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td>Cash:</td>
-                            <td>{{ finances.totals.cash | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Check:</td>
-                            <td>{{ finances.totals.check | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Draft:</td>
-                            <td>{{ finances.totals.draft | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Collected:</td>
-                            <td><b>{{ finances.totals.totalCollected | currency }}</b></td>
-                        </tr>
-                        <tr>
-                            <td>-</td>
-                            <td>-</td>
-                        </tr>
                         <tr>
                             <td>Cash Payouts:</td>
                             <td>{{ finances.totals.cashPayouts | currency }}</td>
@@ -136,7 +144,8 @@
                         </tr>
                     </tbody>
                 </table>
-
+                    </div>
+                </div>
                 <hr/>
 
                 <button ng-click="addPayout()">Add Payout</button>
