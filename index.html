@@ -1,296 +1,72 @@
 <!DOCTYPE html>
 <html ng-app="app">
 
-    <head>
-        <meta name="viewport" content="width=device-width, user-scalable=no">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-        <title>jkalweit - home</title>
-        <script src="scripts/vendor/angular.js"></script>
-        <script src="scripts/vendor/firebase.js"></script>
-        <script src="scripts/vendor/firebase-simple-login.js"></script>
-        <script src="scripts/vendor/angularfire.js"></script>
-    </head>
+    <title>jkalweit.com</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 
-    <body>
-        <div ng-controller="maincontroller">
-            <button ng-show="loginObj.user" ng-click="logout()" style="float: right">logout</button>
-            <h1>hello.</h1>
-            <h5>{{ status }}</h5>
-            <div ng-hide="loginObj.user">
-                <form>
-                    <input ng-disabled="logindisabled" type="email" ng-model="userlogin.email" placeholder="email" />
-                    <input ng-disabled="logindisabled" type="password" ng-model="userlogin.password" placeholder="password" />
-                    <button ng-disabled="logindisabled" type="submit" ng-click="login()">login</button>
-                </form>
-            </div>
-            <div ng-show="loginObj.user">
-                <form>
-                    <label>
-                        <input ng-model="newcategory.description" type="text"/>
-                    </label>
-                    <button type="submit" ng-click="addcategory()">add category</button>
-                </form>
+</head>
 
-                <div ng-repeat="(catkey, category) in categories">
-                    <div ng-click="editCategory(catkey)">
-                        <div ng-hide="isEditingCategory(catkey)">
-                            <h3>{{ category.description }}</h3>
-                        </div>
-                        <div ng-show="isEditingCategory(catkey)">
-                            <label>
-                                <input ng-model="category.description" ng-enter="updateCategory(catkey, category)" />
-                                <button ng-click="updateCategory(catkey, category)">update</button>
-                                <button ng-click="deleteCategory(catkey)">delete</button>
-                            </label>
-                        </div>
-                    </div>
-                    <table>
-                        <tbody>
-                        <tr ng-repeat="item in category.items | toArray | orderBy:'eic':true">
-                            <td style="min-width: 250px;">
-                                <div ng-hide="isEditingItem(item.$key)" ng-click="editItem(item.$key)">
-                                    <span style="display: inline-block; width: 150px">{{ item.description }}</span>
-                                    <span>{{ item.ease }}</span>
-                                    <span>x {{ item.impact }}</span>
-                                    <span>x {{ item.cost }}</span>
-                                    <span>= {{ item.eic }}</span>
-                                </div>
-                                <div ng-show="isEditingItem(item.$key)">
-                                    <input ng-model="item.description" ng-enter="updateItem(catkey, item.$key, item)" />
-                                    <select ng-model="item.ease" ng-options="x.value as x.name for x in easeRatings" ></select>
-                                    <select ng-model="item.impact" ng-options="x.value as x.name for x in impactRatings" ></select>
-                                    <select ng-model="item.cost" ng-options="x.value as x.name for x in costRatings" ></select>
-                                </div>
-                            </td>
-                            <td>
-                                <div ng-show="isEditingItem(item.$key)">
-                                    <button ng-click="updateItem(catkey, item.$key, item)">update</button>
-                                    <button ng-click="deleteItem(catkey, item.$key)">delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label>
-                                    <input ng-model="newitem.description" type="text" ng-enter="additem(catkey)"/>
-                                </label>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<body style="padding-top: 50px;" ng-controller="MainCtrl">
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">jkalweit</a>
         </div>
-        <script>
-            var app = angular.module('app', ['firebase'], null);
-
-            app.directive('ngEnter', function () {
-                return function (scope, element, attrs) {
-                    element.bind("keydown keypress", function (event) {
-                        if(event.which === 13) {
-                            scope.$apply(function (){
-                                scope.$eval(attrs.ngEnter);
-                            });
-
-                            event.preventDefault();
-                        }
-                    });
-                };
-            });
-
-            app.filter('toArray', function () {
-                'use strict';
-
-                return function (obj) {
-                    if (!(obj instanceof Object)) {
-                        return obj;
-                    }
-
-                    return Object.keys(obj).map(function (key) {
-                        return Object.defineProperty(obj[key], '$key', {__proto__: null, value: key});
-                    });
-                }
-            });
+        <div class="collapse navbar-collapse" collapse="navCollapsed">
+            <ul class="nav navbar-nav">
+                <li><a href="./gtd">gtd</a></li>
+                <li><a href="./ybaic">ybaic</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
 
 
 
-            function maincontroller($scope, $firebase, $firebaseSimpleLogin) {
+<div class="jumbotron">
+    <h1>hello.</h1>
+    <p>this is a testing area for personal projects.</p>
 
+    <div class="container">
 
-                $scope.logindisabled = true;
-                var dataRef = new Firebase("https://jkalweit.firebaseio.com");
-                $scope.loginObj = $firebaseSimpleLogin(dataRef);
-                $scope.loginObj.$getCurrentUser().then(function (user) {
-                    $scope.logindisabled = false;
-                }, function (error) {
-                    $scope.logindisabled = false;
-                });
-
-
-                var tasksRef = new Firebase("https://jkalweit.firebaseio.com/jkalweit/tasks");
-                $scope.tasks = $firebase(tasksRef);
-                $scope.categories = $scope.tasks.$child('categories');
-
-                $scope.login = function () {
-                    $scope.logindisabled = true;
-                    $scope.status = 'Logging in...';
-                    $scope.loginObj.$login('password', {
-                        email: $scope.userlogin.email,
-                        password: $scope.userlogin.password
-                    }).then(function (user) {
-                                $scope.status = '';
-                                $scope.logindisabled = false;
-                            },
-                            function (error) {
-                                $scope.status = 'Failed to login: ' + error;
-                                $scope.logindisabled = false;
-                    });
-                };
-
-                $scope.logout = function () {
-                    $scope.loginObj.$logout();
-                };
-
-                $scope.editCategory = function (catkey) {
-                    if(!$scope.editingCategories)
-                        $scope.editingCategories = {};
-                    $scope.editingCategories[catkey] = true;
-                };
-
-                $scope.isEditingCategory = function (catkey) {
-                    if($scope.editingCategories)
-                        return $scope.editingCategories[catkey];
-                    else
-                        return false;
-                };
-
-                $scope.updateCategory = function (catkey, category) {
-                    var cat = $scope.categories.$child(catkey);
-                    cat.$set(category).then(function () {
-                        delete $scope.editingCategories[catkey];
-                    });
-                };
-
-                $scope.deleteCategory = function (catkey) {
-                    if(confirm("Delete category?")){
-                        delete $scope.editingCategories[catkey];
-                        $scope.categories.$remove(catkey);
-                    }
-                };
+        <h5>{{ status }}</h5>
+        <div class="row">
 
 
 
-                $scope.easeRatings = [
-                    { value: 10, name: "10 - 1Hr"},
-                    { value: 9, name: "9 - 1/2 Day"},
-                    { value: 7, name: "7 - 1 Day"},
-                    { value: 5, name: "5 - 1 Week"},
-                    { value: 3, name: "3 - 2 Weeks"},
-                    { value: 1, name: "1 - 1 Month"}
-                ];
+        </div>
 
-                $scope.impactRatings = [
-                    { value: 10, name: "10 - $1,000/Month"},
-                    { value: 9, name: "9 - $700/Month"},
-                    { value: 7, name: "7 - $500/Month"},
-                    { value: 5, name: "5 - $300/Month"},
-                    { value: 3, name: "3 - $100/Month"},
-                    { value: 1, name: "1 - $0/Month"}
-                ];
+    </div>
 
-                $scope.costRatings = [
-                    { value: 10, name: "10 - $10"},
-                    { value: 9, name: "9 - $100"},
-                    { value: 7, name: "7 - $500"},
-                    { value: 5, name: "5 - $1,000"},
-                    { value: 3, name: "3 - $5,000"},
-                    { value: 1, name: "1 - $10,000"}
-                ];
-
-                $scope.additem = function (catkey) {
-
-                    var category = $scope.categories.$child(catkey);
-                    var items = category.$child('items');
-
-                    $scope.updateItemEIC($scope.newitem);
-
-                    items.$add($scope.newitem).then(function () {
-                        $scope.status = '';
-                        $scope.resetNewItem();
-                    }, function (error) {
-                        $scope.status = 'failed to add task: ' + error;
-                    });
-                };
-
-                $scope.editItem = function (itemkey) {
-                    if(!$scope.editingItems)
-                        $scope.editingItems = {};
-                    $scope.editingItems[itemkey] = true;
-                };
-
-                $scope.resetNewItem = function () {
-                    $scope.newitem = { ease: 1, impact: 1, cost: 1 };
-                };
-
-                $scope.isEditingItem = function (itemkey) {
-                    if($scope.editingItems)
-                        return $scope.editingItems[itemkey];
-                    else
-                        return false;
-                };
-
-                $scope.updateItem = function (catkey, itemkey, item) {
-                    $scope.updateItemEIC(item);
-                    var cat = $scope.categories.$child(catkey);
-                    var itemObj = cat.$child('items').$child(itemkey);
-                    itemObj.$set(item).then(function () {
-                        delete $scope.editingItems[itemkey];
-                    });
-                };
+</div>
 
 
 
-                $scope.updateItemEIC = function (item) {
-                    item.eic = item.ease * item.impact * item.cost;
-                };
-
-                $scope.deleteItem = function (catkey, itemkey) {
-                    delete $scope.editingItems[itemkey];
-                    var items = $scope.categories.$child(catkey).$child('items');
-                    items.$remove(itemkey);
-                };
 
 
-                $scope.removeitem = function (catkey, itemkey) {
-                    var category = $scope.categories.$child(catkey);
-                    var items = category.$child('items');
-                    items.$remove(itemkey).then(function () {
-                        $scope.status = '';
-                    }, function (error) {
-                        $scope.status = 'failed to delete item: ' + error;
-                    });
-                };
-                $scope.addcategory = function () {
-                    $scope.tasks.$child('categories').$add($scope.newcategory).then(function () {
-                        $scope.status = '';
-                        $scope.newcategory = {};
-                    }, function (error) {
-                        $scope.status = 'failed to add category: ' + error;
-                    });
-                };
+<script src="scripts/vendor/angular.js"></script>
+<script src="scripts/vendor/ui-bootstrap-tpls-0.9.0.js"></script>
 
-                $scope.itemsToArray = function (items) {
-                    var array = [];
-                    angular.forEach(items, function(item) {
-                        array.push(item);
-                    });
-                    return array;
-                };
 
-                $scope.resetNewItem();
+<script>
+    var app = angular.module('app', ['ui.bootstrap'], null);
 
-            }
-        </script>
-    </body>
+    var MainCtrl = function ($scope) {
 
+    }
+
+</script>
+
+</body>
 </html>
