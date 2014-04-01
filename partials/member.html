@@ -73,11 +73,7 @@
                 <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].fines | currency }}</td>
                 <td>{{ ybaic.meetings[meeting.key].attendance[memberkey].guests | currency }}</td>
                 <td>
-                    {{
-                       ybaic.meetings[meeting.key].attendance[memberkey].cash +
-                       ybaic.meetings[meeting.key].attendance[memberkey].check +
-                       ybaic.meetings[meeting.key].attendance[memberkey].draft | currency
-                    }}
+                    {{ totalPaid(meeting.key) | currency }}
                 </td>
             </tr>
         </tbody>

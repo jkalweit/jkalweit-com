@@ -73,67 +73,24 @@ function MemberCtrl($scope, $routeParams, $firebase) {
             return 0;
     };
 
-//    $scope.updateMember = function () {
-//
-//        //if(!$scope.member.meetings)
-//        $scope.member.meetings = {};
-//
-//        var totals  = {
-//            buyins: 0,
-//            dues: 0,
-//            fines: 0,
-//            guests: 0,
-//            cash: 0,
-//            check: 0,
-//            draft: 0,
-//            meetings: 0,
-//            meetingsAttended: 0
-//        };
-//
-//
-//        totals.totalDue = totals.buyins + totals.dues + totals.fines + totals.guests;
-//        totals.totalCollected = totals.cash + totals.check + totals.draft;
-//        totals.difference = totals.totalCollected - totals.totalDue;
-//
-//
-//
-//        var meeting, attendance;
-//        for(var key in $scope.ybaic.meetings) {
-//            meeting = $scope.ybaic.meetings[key];
-//            attendance = meeting.attendance[$scope.memberkey];
-//            if(attendance) {
-//                $scope.member.meetings[key] = {
-//                    key: key
-//                };
-//
-//                totals.meetings += 1;
-//                if(attendance.attendance)
-//                    totals.meetingsAttended += 1
-//
-//                if(attendance.buyin)
-//                    totals.buyins += Number(attendance.buyin);
-//                if(attendance.dues)
-//                    totals.dues += Number(attendance.dues);
-//                if(attendance.fines)
-//                    totals.fines += Number(attendance.fines);
-//                if(attendance.guests)
-//                    totals.guests += Number(attendance.guests);
-//                if(attendance.cash)
-//                    totals.cash += Number(attendance.cash);
-//                if(attendance.check)
-//                    totals.check += Number(attendance.check);
-//                if(attendance.draft)
-//                    totals.draft += Number(attendance.draft);
-//            }
-//        }
-//
-//        totals.totalDue = totals.buyins + totals.dues + totals.fines + totals.guests;
-//        totals.totalPaid = totals.cash + totals.check + totals.draft;
-//        totals.totalBalance = totals.totalPaid - totals.totalDue;
-//        $scope.member.totals = totals;
-//
-//        $scope.status = 'Member updated.';
-//    };
+    $scope.totalPaid = function(meetingkey) {
+
+        var total = 0;
+
+        var attendance = $scope.ybaic.meetings[meetingkey].attendance[$scope.memberkey]
+        if(!attendance)
+            return null;
+
+        if(attendance.cash)
+            total += Number(attendance.cash);
+        if(attendance.check)
+            total += Number(attendance.check);
+        if(attendance.draft)
+            total += Number(attendance.draft);
+
+        return total;
+    };
+
 
     $scope.saveMember = function () {
         $scope.member.$save().then(function () {
@@ -396,7 +353,7 @@ function MeetingCtrl($scope, $firebase, $routeParams, $filter) {
         totals.totalCollected = totals.cash + totals.check + totals.draft;
         totals.difference = totals.totalCollected - totals.totalDue;
 
-        angular.forEach($scope.payouts, function(payout) {
+        angular.forEach($scope.finances.payout, function(payout) {
             if(payout.type === 'Cash')
                 totals.cashPayouts += payout.amount;
             if(payout.type === 'Check')
@@ -404,7 +361,7 @@ function MeetingCtrl($scope, $firebase, $routeParams, $filter) {
         });
 
         totals.bankDeposit = totals.cash + totals.check - totals.cashPayouts;
-        totals.netChange = totals.bankDeposit - totals.checkPayouts;
+        totals.netChange = totals.bankDeposit + totals.draft - totals.checkPayouts;
         totals.endingBalance = Number($scope.finances.beginningBalance) + totals.netChange;
         $scope.finances.totals = totals;
     };

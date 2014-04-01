@@ -26,16 +26,17 @@
                 <button class="btn btn-default" ng-click="saveAttendance()">Save Attendance</button>
                 <table class="table table-condensed">
                     <thead>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Attendance</th>
-                    <th>Buy-In</th>
-                    <th>Dues</th>
-                    <th>Fines</th>
-                    <th>Guests</th>
-                    <th>Cash</th>
-                    <th>Check</th>
-                    <th>Draft</th>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Attendance</th>
+                        <th>Buy-In</th>
+                        <th>Dues</th>
+                        <th>Fines</th>
+                        <th>Guests</th>
+                        <th>Cash</th>
+                        <th>Check</th>
+                        <th>Draft</th>
+                        <th>Note</th>
                     </thead>
                     <tbody>
                     <tr  ng-repeat="member in meeting.attendance | toArray | orderBy:getMemberNumber">
@@ -49,6 +50,7 @@
                         <td><input type="text" size="5" ng-model="member.cash" /></td>
                         <td><input type="text" size="5" ng-model="member.check" /></td>
                         <td><input type="text" size="5" ng-model="member.draft" /></td>
+                        <td><input type="text" size="10" ng-model="member.note" /></td>
                         <td><button class="btn btn-default" ng-click="removeMember(member.key)">X</button></td>
                     </tr>
                     </tbody>
@@ -66,23 +68,23 @@
                             <tbody>
                                 <tr>
                                     <td>Buyins:</td>
-                                    <td>{{ finances.totals.buyins | currency }}</td>
+                                    <td style="text-align: right">{{ finances.totals.buyins | currency }}</td>
                                 </tr>
                                 <tr>
                                     <td>Dues:</td>
-                                    <td>{{ finances.totals.dues | currency }}</td>
+                                    <td style="text-align: right">{{ finances.totals.dues | currency }}</td>
                                 </tr>
                                 <tr>
                                     <td>Fines:</td>
-                                    <td>{{ finances.totals.fines | currency }}</td>
+                                    <td style="text-align: right">{{ finances.totals.fines | currency }}</td>
                                 </tr>
                                 <tr>
                                     <td>Guests:</td>
-                                    <td>{{ finances.totals.guests | currency }}</td>
+                                    <td style="text-align: right">{{ finances.totals.guests | currency }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>Total:</b></td>
-                                    <td><b>{{ finances.totals.totalDue | currency }}</b></td>
+                                    <td style="text-align: right"><b>{{ finances.totals.totalDue | currency }}</b></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -90,60 +92,64 @@
                     <div class="col-sm-4">
                         <h4>Collected</h4>
                         <table class="table table-condensed">
-                        <tbody>
-                            <tr>
-                                <td>Cash:</td>
-                                <td>{{ finances.totals.cash | currency }}</td>
-                            </tr>
-                            <tr>
-                                <td>Check:</td>
-                                <td>{{ finances.totals.check | currency }}</td>
-                            </tr>
-                            <tr>
-                                <td>Draft:</td>
-                                <td>{{ finances.totals.draft | currency }}</td>
-                            </tr>
-                            <tr>
-                                <td>Collected:</td>
-                                <td><b>{{ finances.totals.totalCollected | currency }}</b></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            <tbody>
+                                <tr>
+                                    <td>Cash:</td>
+                                    <td style="text-align: right">{{ finances.totals.cash | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Check:</td>
+                                    <td style="text-align: right">{{ finances.totals.check | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Draft:</td>
+                                    <td style="text-align: right">{{ finances.totals.draft | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Collected:</td>
+                                    <td style="text-align: right"><b>{{ finances.totals.totalCollected | currency }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Payouts:</td>
+                                    <td style="text-align: right">{{ finances.totals.cashPayouts | currency }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="col-sm-4">
                         <h4>Reconciliation</h4>
                         <table class="table table-condensed">
-                    <tbody>
-                        <tr>
-                            <td>Cash Payouts:</td>
-                            <td>{{ finances.totals.cashPayouts | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bank Deposit:</td>
-                            <td><b>{{ finances.totals.bankDeposit | currency }}</b></td>
-                        </tr>
-                        <tr>
-                            <td>-</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td>Check Payouts:</td>
-                            <td>{{ finances.totals.checkPayouts | currency }}</td>
-                        </tr>
-                        <tr>
-                            <td>Net Change:</td>
-                            <td><b>{{ finances.totals.netChange | currency }}</b></td>
-                        </tr>
-                        <tr>
-                            <td>Beginning Balance:</td>
-                            <td><input type="text" size="6" ng-model="finances.beginningBalance" /></td>
-                        </tr>
-                        <tr>
-                            <td>Ending Balance:</td>
-                            <td><b>{{ finances.totals.endingBalance | currency }}</b></td>
-                        </tr>
-                    </tbody>
-                </table>
+                            <tbody>
+                                <tr>
+                                    <td>Beginning Balance:</td>
+                                    <td style="text-align: right"><input type="text" size="6" ng-model="finances.beginningBalance" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Bank Deposit:</td>
+                                    <td style="text-align: right"><b>+{{ finances.totals.bankDeposit | currency }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Draft:</td>
+                                    <td style="text-align: right">+{{ finances.totals.draft | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Check Payouts:</td>
+                                    <td style="text-align: right">-{{ finances.totals.checkPayouts | currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Ending Balance:</td>
+                                    <td style="text-align: right"><b>={{ finances.totals.endingBalance | currency }}</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Net Change:</td>
+                                    <td style="text-align: right">{{ finances.totals.netChange | currency }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <hr/>
