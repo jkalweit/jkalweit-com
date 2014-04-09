@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <title>ybaic</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">-->
+    <link rel="stylesheet" href="../scripts/vendor/bootstrap-darkly.css">
 </head>
 
-<body style="padding-top: 50px;" ng-controller="MainCtrl">
+<body style="padding-top: 80px;" ng-controller="MainCtrl">
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -21,13 +21,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">ybaic</a>
+                <a class="navbar-brand" href="#">YBAIC</a>
             </div>
             <div class="collapse navbar-collapse" collapse="navCollapsed">
                 <ul class="nav navbar-nav" ng-show="loginObj.user">
 
-                    <li><a href="#members">members</a></li>
-                    <li><a href="#meetings">meetings</a></li>
+                    <li><a href="#members">Members</a></li>
+                    <li><a href="#meetings">Meetings</a></li>
                     <!--<li><a href="" ng-click="doTest()">doTest()</a></li>-->
                 </ul>
                 <p class="navbar-text navbar-right" ng-hide="loginObj.user">try <a href="#">logging in</a>.</p>
@@ -45,7 +45,7 @@
     <script src="../scripts/vendor/firebase-simple-login.js"></script>
     <script src="../scripts/vendor/angularfire.js"></script>
     <script src="../scripts/vendor/ui-bootstrap-tpls-0.9.0.js"></script>
-    <script src="../ybaic/scripts/controllers.js"></script>
+    <script src="scripts/controllers.js"></script>
 
 <script>
     var app = angular.module('app', ['ngRoute', 'firebase', 'ui.bootstrap'], null);
@@ -73,7 +73,7 @@
             return Object.keys(obj).map(function (key) {
                 return Object.defineProperty(obj[key], '$key', {__proto__: null, value: key});
             });
-        }
+        };
     });
     app.filter('checkmark', function() {
         return function(input) {

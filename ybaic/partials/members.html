@@ -37,20 +37,20 @@
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-            <div class="form-group">
+            <hr />
+            <div class="form-group" style="text-align: left">
                 <label for="notes">Notes</label>
                 <textarea ng-model="member.notes" class="form-control" id="notes" />
             </div>
         </div>
     </script>
 
-    <h1>members</h1>
+    <h1>Members</h1>
     <h5>- {{ status }} -</h5>
     <tabset>
 
-
         <tab heading="Contact Information">
-            <button class="btn btn-default" ng-click="addMember()">Add Member</button>
+            <button style="margin: 5px" class="btn btn-default" ng-click="addMember()">Add Member</button>
             <table class="table table-condensed">
                 <thead>
                 <tr>
@@ -74,7 +74,7 @@
         </tab>
 
         <tab heading="Finances">
-            <button class="btn btn-default" ng-click="updateMembers()">Update Members</button>
+            <button style="margin: 5px" class="btn btn-default" ng-click="updateMembers()">Update Members</button>
             <table class="table table-condensed">
                 <thead>
                     <tr>

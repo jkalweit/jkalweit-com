@@ -19,9 +19,9 @@ function MainCtrl($scope, $location, $firebaseSimpleLogin) {
         $location.path('/');
     };
 
-//    $scope.doTest = function () {
-//        $scope.loginObj.$changePassword('kalweit@alumni.duke.edu', 'password', '2580Juicet');
-//    };
+    $scope.doTest = function () {
+
+    };
 
 }
 

@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <title>jkalweit.com</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
-
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">-->
+    <link rel="stylesheet" href="scripts/vendor/bootstrap-darkly.css">
 </head>
 
-<body style="padding-top: 50px;" ng-controller="MainCtrl">
+<body style="padding-top: 80px;" ng-controller="MainCtrl">
 
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
@@ -25,32 +25,21 @@
         </div>
         <div class="collapse navbar-collapse" collapse="navCollapsed">
             <ul class="nav navbar-nav">
-                <li><a href="./gtd">gtd</a></li>
-                <li><a href="./ybaic">ybaic</a></li>
+                <li><a href="./gtd">GTD</a></li>
+                <li><a href="./ybaic">YBAIC</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
 </div>
 
 
-
-<div class="jumbotron">
-    <h1>hello.</h1>
-    <p>this is a testing area for personal projects.</p>
-
-    <div class="container">
-
-        <h5>{{ status }}</h5>
-        <div class="row">
-
-
-
-        </div>
-
+<div class="container">
+    <div class="jumbotron">
+        <h1>Hello.</h1>
+        <p>This is a testing area for my projects.</p>
+        <p>Most of them are hosted on <a href="https://github.com/jkalweit">github</a>.</p>
     </div>
-
 </div>
-
 
 
 
