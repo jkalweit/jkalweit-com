@@ -9,11 +9,13 @@
 
         <div ng-hide="loginObj.user">
             <h3>Try logging in:</h3>
-            <form>
-                <input ng-disabled="logindisabled" type="email" ng-model="userlogin.email" placeholder="email" />
-                <input ng-disabled="logindisabled" type="password" ng-model="userlogin.password" placeholder="password" />
-                <button ng-disabled="logindisabled" type="submit" ng-click="login()">login</button>
-            </form>
+            <div class="row">
+                <form class="col-xs-12 col-md-6">
+                    <input class="form-control" style="width: auto; display: inline" ng-disabled="logindisabled" type="email" ng-model="userlogin.email" placeholder="email" />
+                    <input class="form-control" style="width: auto; display: inline" ng-disabled="logindisabled" type="password" ng-model="userlogin.password" placeholder="password" />
+                    <button class="btn btn-default" ng-disabled="logindisabled" type="submit" ng-click="login()">Login</button>
+                </form>
+            </div>
             <!--<p>-->
                 <!--or login with <a href="" ng-click="loginGoogle()">google+</a>.-->
             <!--</p>-->

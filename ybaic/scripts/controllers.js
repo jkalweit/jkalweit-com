@@ -259,7 +259,7 @@ function MeetingsCtrl($scope, $firebase, $modal) {
                 members: function () {
                     var members = [];
                     angular.forEach($scope.ybaic.members, function (member) {
-                       members.push(member.firstname + ' ' + member.lastname);
+                        members.push(member.firstname + ' ' + member.lastname);
                     });
                     return members.sort();
                 }
@@ -415,4 +415,68 @@ function MeetingCtrl($scope, $firebase, $routeParams, $filter) {
         $scope.saveAttendance();
     };
 
+}
+
+
+function InvestmentsCtrl($scope, $firebase, $modal) {
+
+    $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
+    $scope.investments = $scope.ybaic.$child('investments');
+
+    $scope.addInvestment = function () {
+        $scope.editInvestment(null, {});
+    }
+    $scope.deleteInvestment = function (key) {
+        if(confirm('Are you sure you want to delete this investment?')) {
+            $scope.investments.$remove(key);
+        }
+    }
+    $scope.editInvestment = function (key, investment) {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContent.html',
+            controller: InvestmentEditCtrl,
+            resolve: {
+                investment: function () {
+                    return investment;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (investment) {
+            if(!key) {
+                $scope.investments.$add(investment).then(function() {
+                        $scope.status = 'Investment added.';
+                    },
+                    function(error) {
+                        $scope.status = 'FAILED to add investment: ' + error;
+                    }
+                );
+            } else {
+                $scope.investments.$child(key).$set(investment).then(function() {
+                        $scope.status = 'Saved changes to investment.'
+                    },
+                    function(error) {
+                        $scope.status = 'FAILED to saved changes to investment: ' + error;
+                    }
+                );
+            }
+        }, function () {
+            $scope.status = 'Edit canceled.'
+        });
+    };
+
+
+    var InvestmentEditCtrl = function ($scope, $modalInstance, investment) {
+
+        $scope.investment = {};
+        angular.copy(investment, $scope.investment);
+
+        $scope.ok = function () {
+            $modalInstance.close($scope.investment);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
 }
