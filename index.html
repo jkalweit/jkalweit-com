@@ -35,9 +35,12 @@
 
 <div class="container">
     <div class="jumbotron">
-        <h1>Hello.</h1>
-        <p>This is a testing area for my projects.</p>
-        <p>Most of them are hosted on <a href="https://github.com/jkalweit">github</a>.</p>
+        <!--<h1>Hello.</h1>-->
+        <!--<p>This is a testing area for my projects.</p>-->
+        <!--<p>Most of them are hosted on <a href="https://github.com/jkalweit">github</a>.</p>-->
+        <button ng-click="doTest()">doTest()</button>
+        <h3>Fingerprint Service: {{ auth.status }}</h3>
+        <h3>{{ status }}</h3>
     </div>
 </div>
 
@@ -47,11 +50,25 @@
 <script src="scripts/vendor/angular.js"></script>
 <script src="scripts/vendor/ui-bootstrap-tpls-0.9.0.js"></script>
 
+<script src="scripts/fingerprint.js"></script>
 
 <script>
-    var app = angular.module('app', ['ui.bootstrap'], null);
 
-    var MainCtrl = function ($scope) {
+
+    var app = angular.module('app', ['ui.bootstrap', 'fingerprintAuth'], null);
+
+    var MainCtrl = function ($scope, fingerprintAuth) {
+
+        $scope.auth = fingerprintAuth;
+
+        $scope.doTest = function () {
+            $scope.status = 'Doing test...';
+            fingerprintAuth.getUsername().then(function (username) {
+                $scope.status = 'Username is ' + username;
+            }, function (error) {
+                $scope.status = error;
+            });
+        };
 
     }
 
