@@ -418,10 +418,13 @@ function MeetingCtrl($scope, $firebase, $routeParams, $filter) {
 }
 
 
-function InvestmentsCtrl($scope, $firebase, $modal) {
+function InvestmentsCtrl($scope, $http, $q, $timeout, $firebase, $modal) {
 
     $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
     $scope.investments = $scope.ybaic.$child('investments');
+    $scope.investments.$on('loaded', function () {
+        $timeout($scope.getCurrentPrices); //timeout to allow data to be set.
+    });
 
     $scope.addInvestment = function () {
         $scope.editInvestment(null, {});
@@ -465,6 +468,83 @@ function InvestmentsCtrl($scope, $firebase, $modal) {
         });
     };
 
+    $scope.isNetIncrease = function (investment) {
+        return investment.netChange >= 0;
+    };
+
+    $scope.isNetTotalIncrease = function () {
+        if($scope.totals){
+            return $scope.totals.netChange >= 0;
+        }
+        else
+            return false;
+    };
+
+    $scope.getCurrentPrices = function () {
+
+        $scope.status = 'Updating prices, please wait...';
+
+        var symbol, url;
+
+        $scope.totals = {
+            initialValue: 0,
+            currValue: 0,
+            netChange: 0,
+            netChangeValue: 0
+        };
+
+        var promises = [];
+
+        angular.forEach($scope.ybaic.investments, function (investment) {
+
+            symbol = investment.name;
+            url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22"+symbol+"%22)%0A%09%09&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json";
+
+            investment.currentUnitPrice = '-';
+            investment.buyPrice = '-';
+            investment.initialValue = '-';
+            investment.currValue = '-';
+            investment.netChangeValue = '-';
+            investment.netChange = '-';
+
+            var deferred = $q.defer();
+            promises.push(deferred.promise);
+
+            $http.get(url).then(function (result) {
+                if(result.data.query.count >= 1) {
+                    investment.currentUnitPrice = Number(result.data.query.results.quote.BidRealtime);
+                    investment.buyPrice = Number(investment.unitprice);
+                    investment.initialValue = Number(investment.total);
+                    investment.currValue = investment.currentUnitPrice * Number(investment.units);
+                    investment.netChangeValue = investment.currValue - investment.initialValue;
+                    investment.netChange = (investment.netChangeValue / investment.initialValue) * 100;
+
+
+                    $scope.totals.initialValue += investment.initialValue;
+                    $scope.totals.currValue += investment.currValue;
+                    $scope.totals.netChangeValue = ($scope.totals.currValue - $scope.totals.initialValue);
+                    $scope.totals.netChange = ($scope.totals.netChangeValue / $scope.totals.initialValue) * 100;
+//                    $scope.totals = totals;
+                    deferred.resolve();
+                }
+                else {
+                    investment.currentUnitPrice = '';
+                    deferred.reject('Failed to get current price for: ' + investment.name);
+                }
+            }, function (err) {
+                $scope.status = 'Failed to get current stock buyPrice: ' + err;
+                investment.currentUnitPrice = 'ERR';
+                deferred.reject('Failed to get current price for: ' + investment.name);
+            });
+
+        });
+
+        $q.all(promises).then(function () {
+            $scope.status = 'All prices updated.';
+        }, function (err) {
+            $scope.status = err;
+        });
+    };
 
     var InvestmentEditCtrl = function ($scope, $modalInstance, investment) {
 

@@ -1,3 +1,12 @@
+<style>
+    .net-increase {
+        color: lawngreen;
+    }
+    .net-decrease {
+        color: red;
+    }
+</style>
+
 <div class="container">
 
     <script type="text/ng-template" id="myModalContent.html">
@@ -63,6 +72,7 @@
     <h5>- {{ status }} -</h5>
     <div ng-show="loginObj.user">
         <button class="btn btn-default" ng-click="addInvestment()">Add Investment</button>
+        <button class="btn btn-primary" ng-click="getCurrentPrices()">Update Current Prices</button>
         <table class="table table-condensed">
             <thead>
             <tr>
@@ -71,12 +81,14 @@
                 <!--<th class="hidden-xs">Type</th>-->
                 <!--this is to force update-->
                 <th>Name</th>
-                <th>Units</th>
-                <th>Unit Price</th>
-                <th class="hidden-xs">Fees</th>
-                <th>Invested</th>
-                <th class="hidden-xs">Current Value</th>
-                <th class="hidden-xs">Net Change</th>
+                <th style="text-align: right">Units</th>
+                <th style="text-align: right">Buy Price</th>
+                <!--<th style="text-align: right" class="hidden-xs">Fees</th>-->
+                <!--<th style="text-align: right">Invested</th>-->
+                <th style="text-align: right">Current Price</th>
+                <th style="text-align: right">% Change</th>
+                <th style="text-align: right" class="hidden-xs">Value Change</th>
+                <th style="text-align: right" class="hidden-xs">Current Value</th>
             </tr>
             </thead>
             <tbody>
@@ -84,13 +96,28 @@
                 <td class="col-xs-1 col-sm-1"><a ng-click="editInvestment(investment.$key, investment)">{{ investment.investmentnumber }}</a></td>
                 <td class="col-xs-2 col-sm-1">{{ investment.date | date:'MM/dd/yy' }}</td>
                 <!--<td class="hidden-xs col-sm-1">{{ investment.type }}</td>-->
-                <td class="col-xs-3 col-sm-3">{{ investment.name }} {{ investment.description }}</td>
-                <td class="col-xs-1 col-sm-1">{{ investment.units }}</td>
-                <td class="col-xs-1 col-sm-1">{{ investment.unitprice | currency }}</td>
-                <td class="hidden-xs col-sm-1">{{ investment.tradefees | currency }}</td>
-                <td class="col-xs-1 col-sm-1">{{ investment.total | currency }}</td>
-                <td class="hidden-xs col-sm-1">{{ investment.currentvalue | currency }}</td>
-                <td class="hidden-xs col-sm-1">{{ investment.netchange | currency }}</td>
+                <td class="col-xs-2 col-sm-3">{{ investment.name }} {{ investment.description }}</td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.units }}</td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.unitprice | currency }}</td>
+                <!--<td class="hidden-xs col-sm-1" style="text-align: right">{{ investment.tradefees | currency }}</td>-->
+                <!--<td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.total | currency }}</td>-->
+                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.currentUnitPrice | currency }}</td>
+                <td class="col-xs-1 col-sm-1" ng-class="{'net-increase' : isNetIncrease(investment), 'net-decrease' : !isNetIncrease(investment)}" style="text-align: right">{{ investment.netChange | number:2 }}%</td>
+                <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetIncrease(investment), 'net-decrease' : !isNetIncrease(investment)}" style="text-align: right">{{ investment.netChangeValue | currency }}</td>
+                <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetIncrease(investment), 'net-decrease' : !isNetIncrease(investment)}" style="text-align: right">{{ investment.currValue | currency }}</td>
+            </tr>
+            </tbody>
+            <tbody>
+            <tr>
+                <td class="col-xs-1 col-sm-1"></td>
+                <td class="col-xs-2 col-sm-1"></td>
+                <td class="col-xs-3 col-sm-3"></td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right"></td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right"></td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right">Total:</td>
+                <td class="col-xs-1 col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.netChange | number:2 }}%</td>
+                <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.netChangeValue | currency }}</td>
+                <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.currValue | currency }}</td
             </tr>
             </tbody>
         </table>
