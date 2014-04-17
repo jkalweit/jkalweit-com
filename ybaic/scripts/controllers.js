@@ -111,6 +111,11 @@ function MemberCtrl($scope, $routeParams, $firebase) {
         })
     };
 
+    $scope.isPositiveBalance = function () {
+        if($scope.member && $scope.member.totals)
+            return $scope.member.totals.totalBalance >= 0;
+    };
+
 }
 
 function MembersCtrl($scope, $firebase, $modal) {
@@ -213,8 +218,9 @@ function MembersCtrl($scope, $firebase, $modal) {
         var meeting, attendance;
         for(var key in $scope.ybaic.meetings) {
             meeting = $scope.ybaic.meetings[key];
-            attendance = meeting.attendance[memberkey];
-            if(attendance) {
+            if(meeting.attendance && meeting.attendance[memberkey]) {
+                attendance = meeting.attendance[memberkey];
+
                 member.meetings[key] = {
                     key: key
                 };

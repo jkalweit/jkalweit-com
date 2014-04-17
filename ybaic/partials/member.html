@@ -1,3 +1,11 @@
+<style>
+    .positive-balance {
+        color: lawngreen;
+    }
+    .negative-balance {
+        color: red;
+    }
+</style>
 <div class="container">
 
     <div class="row">
@@ -30,7 +38,7 @@
                 </tr>
                 <tr>
                     <th>Balance:</th>
-                    <td><b>{{ member.totals.totalBalance | currency }}</b></td>
+                    <td ng-class="{'positive-balance' : isPositiveBalance(), 'negative-balance' : !isPositiveBalance(member)}"><b>{{ member.totals.totalBalance | currency }}</b></td>
                 </tr>
                 </tbody>
             </table>
