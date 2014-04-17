@@ -25,6 +25,17 @@ function MainCtrl($scope, $location, $firebaseSimpleLogin) {
 
 }
 
+function NavCtrl($scope, $rootScope, $location) {
+    $scope.isActive = function (viewLocation) {
+        return viewLocation === $location.path();
+    };
+
+    $rootScope.$on('$locationChangeStart', function () {
+            $scope.navCollapsed = true;
+        }
+    );
+}
+
 function HomeCtrl($scope, $firebaseSimpleLogin) {
 
     $scope.logindisabled = true;
@@ -150,6 +161,10 @@ function MembersCtrl($scope, $firebase, $modal) {
         });
     };
 
+
+    $scope.isPositiveBalance = function (member) {
+        return member.totals.totalBalance >= 0;
+    };
 
     var MemberEditCtrl = function ($scope, $modalInstance, member) {
 
@@ -422,9 +437,23 @@ function InvestmentsCtrl($scope, $http, $q, $timeout, $firebase, $modal) {
 
     $scope.ybaic = $firebase(new Firebase("https://jkalweit.firebaseio.com/ybaic"))
     $scope.investments = $scope.ybaic.$child('investments');
+    $scope.investmentwatches = $scope.ybaic.$child('investmentwatches');
+
+
+
+    var deferred1 = $q.defer();
     $scope.investments.$on('loaded', function () {
+        deferred1.resolve();
+    });
+    var deferred2 = $q.defer();
+    $scope.investmentwatches.$on('loaded', function () {
+        deferred2.resolve();
+    });
+    $q.all([deferred1, deferred2]).then(function () {
         $timeout($scope.getCurrentPrices); //timeout to allow data to be set.
     });
+
+
 
     $scope.addInvestment = function () {
         $scope.editInvestment(null, {});
@@ -436,7 +465,7 @@ function InvestmentsCtrl($scope, $http, $q, $timeout, $firebase, $modal) {
     }
     $scope.editInvestment = function (key, investment) {
         var modalInstance = $modal.open({
-            templateUrl: 'myModalContent.html',
+            templateUrl: 'investmentModal.html',
             controller: InvestmentEditCtrl,
             resolve: {
                 investment: function () {
@@ -532,12 +561,48 @@ function InvestmentsCtrl($scope, $http, $q, $timeout, $firebase, $modal) {
                     deferred.reject('Failed to get current price for: ' + investment.name);
                 }
             }, function (err) {
-                $scope.status = 'Failed to get current stock buyPrice: ' + err;
+                $scope.status = 'Failed to get current stock price: ' + err;
                 investment.currentUnitPrice = 'ERR';
                 deferred.reject('Failed to get current price for: ' + investment.name);
             });
 
         });
+
+
+
+        angular.forEach($scope.ybaic.investmentwatches, function (investment) {
+
+            symbol = investment.name;
+            url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22"+symbol+"%22)%0A%09%09&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json";
+
+            investment.buyPrice = '-';
+            investment.currentUnitPrice = '-';
+            investment.netChange = '-';
+
+            var deferred = $q.defer();
+            promises.push(deferred.promise);
+
+            $http.get(url).then(function (result) {
+                if(result.data.query.count >= 1) {
+                    investment.currentUnitPrice = Number(result.data.query.results.quote.BidRealtime);
+                    investment.buyPrice = Number(investment.unitprice);
+                    investment.netChange = (investment.currentUnitPrice / investment.buyPrice - 1) * 100;
+
+                    deferred.resolve();
+                }
+                else {
+                    investment.currentUnitPrice = '';
+                    deferred.reject('Failed to get current price for: ' + investment.name);
+                }
+            }, function (err) {
+                $scope.status = 'Failed to get current price: ' + err;
+                investment.currentUnitPrice = 'ERR';
+                deferred.reject('Failed to get current price for: ' + investment.name);
+            });
+
+        });
+
+
 
         $q.all(promises).then(function () {
             $scope.status = 'All prices updated.';
@@ -558,5 +623,54 @@ function InvestmentsCtrl($scope, $http, $q, $timeout, $firebase, $modal) {
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
+    };
+
+
+
+
+
+
+
+
+    $scope.addInvestmentWatch = function () {
+        $scope.editInvestmentWatch(null, {});
+    }
+    $scope.deleteInvestmentWatch = function (key) {
+        if(confirm('Are you sure you want to delete this investment watch?')) {
+            $scope.investmentwatches.$remove(key);
+        }
+    }
+    $scope.editInvestmentWatch = function (key, investment) {
+        var modalInstance = $modal.open({
+            templateUrl: 'watchModal.html',
+            controller: InvestmentEditCtrl,
+            resolve: {
+                investment: function () {
+                    return investment;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (investment) {
+            if(!key) {
+                $scope.investmentwatches.$add(investment).then(function() {
+                        $scope.status = 'Investment Watch added.';
+                    },
+                    function(error) {
+                        $scope.status = 'FAILED to add investment watch: ' + error;
+                    }
+                );
+            } else {
+                $scope.investmentwatches.$child(key).$set(investment).then(function() {
+                        $scope.status = 'Saved changes to investment watch.'
+                    },
+                    function(error) {
+                        $scope.status = 'FAILED to saved changes to investment watch: ' + error;
+                    }
+                );
+            }
+        }, function () {
+            $scope.status = 'Edit canceled.'
+        });
     };
 }

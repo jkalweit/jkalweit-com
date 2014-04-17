@@ -9,7 +9,7 @@
 
 <div class="container">
 
-    <script type="text/ng-template" id="myModalContent.html">
+    <script type="text/ng-template" id="investmentModal.html">
         <div class="modal-header">
             <h3>Edit Investment</h3>
         </div>
@@ -58,6 +58,10 @@
                     <label for="total">Total</label>
                     <input ng-model="investment.total" type="text" class="form-control" id="total" />
                 </div>
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <input ng-model="investment.note" type="text" class="form-control" id="note" />
+                </div>
             </form>
         </div>
         <div class="modal-footer">
@@ -65,6 +69,52 @@
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </script>
+
+    <script type="text/ng-template" id="watchModal.html">
+        <div class="modal-header">
+            <h3>Edit Watch</h3>
+        </div>
+        <div class="modal-body" ng-enter="ok()">
+            <form role="form">
+                <div class="form-group">
+                    <label for="investmentnumber">Watch Number</label>
+                    <input ng-model="investment.investmentnumber" type="number" class="form-control" id="investmentnumber" />
+                </div>
+                <div class="form-group">
+                    <p class="input-group">
+                        <label for="date">Date</label>
+                        <input id="date" type="text" class="form-control" datepicker-popup="{{format}}" ng-model="investment.date" is-open="opened" min="2013-05-01" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input ng-model="investment.name" type="text" class="form-control" id="name" />
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input ng-model="investment.description" type="text" class="form-control" id="description" />
+                </div>
+                <div class="form-group">
+                    <label for="unitprice">Unit Price</label>
+                    <input ng-model="investment.unitprice" type="text" class="form-control" id="unitprice" />
+                </div>
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <input ng-model="investment.note" type="text" class="form-control" id="note" />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+
+
 
 
     <h1>Investments</h1>
@@ -81,8 +131,8 @@
                 <!--<th class="hidden-xs">Type</th>-->
                 <!--this is to force update-->
                 <th>Name</th>
-                <th style="text-align: right">Units</th>
-                <th style="text-align: right">Buy Price</th>
+                <th style="text-align: right" class="hidden-xs">Units</th>
+                <th style="text-align: right" class="hidden-xs">Buy Price</th>
                 <!--<th style="text-align: right" class="hidden-xs">Fees</th>-->
                 <!--<th style="text-align: right">Invested</th>-->
                 <th style="text-align: right">Current Price</th>
@@ -97,8 +147,8 @@
                 <td class="col-xs-2 col-sm-1">{{ investment.date | date:'MM/dd/yy' }}</td>
                 <!--<td class="hidden-xs col-sm-1">{{ investment.type }}</td>-->
                 <td class="col-xs-2 col-sm-3">{{ investment.name }} {{ investment.description }}</td>
-                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.units }}</td>
-                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.unitprice | currency }}</td>
+                <td class="hidden-xs col-sm-1" style="text-align: right">{{ investment.units }}</td>
+                <td class="hidden-xs col-sm-1" style="text-align: right">{{ investment.unitprice | currency }}</td>
                 <!--<td class="hidden-xs col-sm-1" style="text-align: right">{{ investment.tradefees | currency }}</td>-->
                 <!--<td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.total | currency }}</td>-->
                 <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.currentUnitPrice | currency }}</td>
@@ -112,12 +162,44 @@
                 <td class="col-xs-1 col-sm-1"></td>
                 <td class="col-xs-2 col-sm-1"></td>
                 <td class="col-xs-3 col-sm-3"></td>
-                <td class="col-xs-1 col-sm-1" style="text-align: right"></td>
-                <td class="col-xs-1 col-sm-1" style="text-align: right"></td>
+                <td class="hidden-xs col-sm-1" style="text-align: right"></td>
+                <td class="hidden-xs col-sm-1" style="text-align: right"></td>
                 <td class="col-xs-1 col-sm-1" style="text-align: right">Total:</td>
                 <td class="col-xs-1 col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.netChange | number:2 }}%</td>
                 <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.netChangeValue | currency }}</td>
                 <td class="hidden-xs col-sm-1" ng-class="{'net-increase' : isNetTotalIncrease(), 'net-decrease' : !isNetTotalIncrease()}" style="text-align: right; font-weight: bold;">{{ totals.currValue | currency }}</td
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h1>Watch List</h1>
+
+    <div ng-show="loginObj.user">
+        <button class="btn btn-default" ng-click="addInvestmentWatch()">Add Watch</button>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th class="hidden-xs"></th>
+                <th class="hidden-xs" style="text-align: right">Watch Price</th>
+                <th style="text-align: right">Current Price</th>
+                <th style="text-align: right">% Change</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  ng-repeat="investment in ybaic.investmentwatches | toArray | orderBy:'investmentnumber'">
+                <td class="col-xs-1 col-sm-1"><a ng-click="editInvestmentWatch(investment.$key, investment)">{{ investment.investmentnumber }}</a></td>
+                <td class="col-xs-2 col-sm-1">{{ investment.date | date:'MM/dd/yy' }}</td>
+                <td class="col-xs-2 col-sm-3">{{ investment.name }} {{ investment.description }}</td>
+                <td class="hidden-xs col-sm-1"></td>
+                <td class="hidden-xs col-sm-1" style="text-align: right">{{ investment.unitprice | currency }}</td>
+                <td class="col-xs-1 col-sm-1" style="text-align: right">{{ investment.currentUnitPrice | currency }}</td>
+                <td class="col-xs-1 col-sm-1" ng-class="{'net-increase' : isNetIncrease(investment), 'net-decrease' : !isNetIncrease(investment)}" style="text-align: right">{{ investment.netChange | number:2 }}%</td>
+                <td class="hidden-xs col-sm-1"></td>
+                <td class="hidden-xs col-sm-1"></td>
             </tr>
             </tbody>
         </table>

@@ -12,7 +12,7 @@
 
 <body style="padding-top: 80px;" ng-controller="MainCtrl">
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-controller="NavCtrl">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
@@ -25,10 +25,10 @@
             </div>
             <div class="collapse navbar-collapse" collapse="navCollapsed">
                 <ul class="nav navbar-nav" ng-show="loginObj.user">
-
-                    <li><a href="#members">Members</a></li>
-                    <li><a href="#meetings">Meetings</a></li>
-                    <li><a href="#investments">Investments</a></li>
+                    <li ng-class="{ active: isActive('/')}"><a href="#">Home</a></li>
+                    <li ng-class="{ active: isActive('/members')}"><a href="#members">Members</a></li>
+                    <li ng-class="{ active: isActive('/meetings')}"><a href="#meetings">Meetings</a></li>
+                    <li ng-class="{ active: isActive('/investments')}"><a href="#investments">Investments</a></li>
                     <!--<li><a href="" ng-click="doTest()">doTest()</a></li>-->
                 </ul>
                 <p class="navbar-text navbar-right" ng-hide="loginObj.user">try <a href="#">logging in</a>.</p>
